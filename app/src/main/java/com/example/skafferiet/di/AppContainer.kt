@@ -1,6 +1,7 @@
 package com.example.skafferiet.di
 
 import android.content.Context
+import com.example.skafferiet.BuildConfig
 import com.example.skafferiet.data.api.RetrofitClient
 import com.example.skafferiet.data.local.SkafferiDatabase
 import com.example.skafferiet.data.repository.OfflineFirstRecipeRepository
@@ -26,7 +27,7 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
         OfflineFirstRecipeRepository(
             spoonacularService = RetrofitClient.spoonacularService,
             recipeDao = database.recipeDao(),
-            apiKey = "YOUR_API_KEY_HERE" // TODO: Move to Secrets Gradle Plugin
+            apiKey = BuildConfig.SPOONACULAR_API_KEY
         )
     }
 }
