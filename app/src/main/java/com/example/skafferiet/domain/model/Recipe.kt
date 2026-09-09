@@ -9,5 +9,6 @@ data class Recipe(
     val sourceUrl: String?,
     val ingredients: List<Ingredient>,
     val summary: String?,
-    val instructions: String?
+    val instructions: String?,
+    val isFavorite: Boolean = false
 )

@@ -53,7 +53,8 @@ fun RecipeEntity.toDomain(): Recipe {
         sourceUrl = null,
         ingredients = ingredients.map { it.toDomain() },
         summary = summary,
-        instructions = null
+        instructions = null,
+        isFavorite = isFavorite
     )
 }
 
@@ -71,6 +72,7 @@ fun Recipe.toEntity(): RecipeEntity {
         title = title,
         image = image,
         summary = summary,
-        ingredients = ingredients.map { it.toEntity() }
+        ingredients = ingredients.map { it.toEntity() },
+        isFavorite = isFavorite
     )
 }

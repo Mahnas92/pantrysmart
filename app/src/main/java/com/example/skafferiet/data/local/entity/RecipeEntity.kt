@@ -11,5 +11,6 @@ data class RecipeEntity(
     val title: String,
     val image: String?,
     val summary: String?,
-    val ingredients: List<IngredientEntity>
+    val ingredients: List<IngredientEntity>,
+    val isFavorite: Boolean = false
 )
