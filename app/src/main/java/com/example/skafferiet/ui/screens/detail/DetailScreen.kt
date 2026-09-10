@@ -7,16 +7,20 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import com.example.skafferiet.R
 import com.example.skafferiet.domain.model.Ingredient
 import com.example.skafferiet.domain.model.Recipe
 import com.example.skafferiet.ui.components.SkafferiScaffold
@@ -141,7 +145,9 @@ fun RecipeImage(imageUrl: String?, title: String) {
             model = imageUrl,
             contentDescription = title,
             modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop
+            contentScale = ContentScale.Crop,
+            placeholder = painterResource(R.drawable.placeholder),
+            error = rememberVectorPainter(Icons.Default.Warning)
         )
     }
 }

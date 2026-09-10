@@ -1,5 +1,6 @@
 package com.example.skafferiet.data.repository
 
+import android.util.Log
 import com.example.skafferiet.data.api.SpoonacularService
 import com.example.skafferiet.data.local.dao.RecipeDao
 import com.example.skafferiet.data.local.entity.RecipeEntity
@@ -33,6 +34,7 @@ class OfflineFirstRecipeRepository(
             val entities = response.results.map { it.toDomain().toEntity() }
             upsertAll(entities)
         } catch (e: Exception) {
+            Log.e("RecipeRepository", "Error fetching recipes for query: $query", e)
             // Error handling: fallback is already handled by the DB observer
         }
 
@@ -51,6 +53,7 @@ class OfflineFirstRecipeRepository(
             val dto = spoonacularService.getRecipeInformation(id.toInt(), apiKey)
             upsertAll(listOf(dto.toDomain().toEntity()))
         } catch (e: Exception) {
+            Log.e("RecipeRepository", "Error fetching recipe details for id: $id", e)
             // Fallback to cache
         }
 
@@ -69,7 +72,17 @@ class OfflineFirstRecipeRepository(
         for (entity in entities) {
             val existing = recipeDao.getRecipeByIdOnce(entity.id)
             if (existing != null) {
-                recipeDao.insert(entity.copy(isFavorite = existing.isFavorite))
+                // Merge data: preserve existing details if the new entity has less information
+                val merged = entity.copy(
+                    isFavorite = existing.isFavorite,
+                    ingredients = if (entity.ingredients.isNotEmpty()) entity.ingredients else existing.ingredients,
+                    instructions = entity.instructions ?: existing.instructions,
+                    summary = entity.summary ?: existing.summary,
+                    readyInMinutes = entity.readyInMinutes ?: existing.readyInMinutes,
+                    servings = entity.servings ?: existing.servings,
+                    sourceUrl = entity.sourceUrl ?: existing.sourceUrl
+                )
+                recipeDao.insert(merged)
             } else {
                 recipeDao.insert(entity)
             }
