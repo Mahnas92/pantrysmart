@@ -31,20 +31,28 @@ class DetailScreenTest {
         instructions = "Test instruktioner"
     )
 
-    private val fakeRepository = object : RecipeRepository {
+    private class FakeRecipeRepository(val recipe: Recipe) : RecipeRepository {
+        var addIngredientCalled = false
+        var addAllIngredientsCalled = false
+        
         override fun getRecipes(query: String): Flow<List<Recipe>> = flowOf(emptyList())
-        override fun getRecipeDetails(id: Long): Flow<Recipe?> = flowOf(testRecipe)
+        override fun getRecipeDetails(id: Long): Flow<Recipe?> = flowOf(recipe)
         override suspend fun toggleFavorite(recipe: Recipe) {}
         override fun isFavorite(id: Long): Flow<Boolean> = flowOf(false)
         override fun getFavorites(): Flow<List<Recipe>> = flowOf(emptyList())
         override fun getShoppingList(): Flow<List<Ingredient>> = flowOf(emptyList())
-        override suspend fun addIngredientsToList(ingredients: List<Ingredient>) {}
-        override suspend fun addIngredientToList(ingredient: Ingredient) {}
+        override suspend fun addIngredientsToList(ingredients: List<Ingredient>) {
+            addAllIngredientsCalled = true
+        }
+        override suspend fun addIngredientToList(ingredient: Ingredient) {
+            addIngredientCalled = true
+        }
         override suspend fun deleteIngredientFromList(name: String) {}
     }
 
     @Test
     fun detailScreen_showsRecipeDetails() {
+        val fakeRepository = FakeRecipeRepository(testRecipe)
         val viewModel = DetailViewModel(recipeId = 1L, repository = fakeRepository)
 
         composeTestRule.setContent {
@@ -66,5 +74,51 @@ class DetailScreenTest {
 
         // Check if instructions are displayed
         composeTestRule.onNodeWithText("Test instruktioner").assertIsDisplayed()
+    }
+
+    @Test
+    fun detailScreen_clickingAddIngredient_callsRepository() {
+        val fakeRepository = FakeRecipeRepository(testRecipe)
+        val viewModel = DetailViewModel(recipeId = 1L, repository = fakeRepository)
+
+        composeTestRule.setContent {
+            SkafferietTheme {
+                DetailScreen(
+                    viewModel = viewModel,
+                    onBackClick = {},
+                    onNavigateToFavorites = {},
+                    onNavigateToShoppingList = {}
+                )
+            }
+        }
+
+        // Click the individual add button
+        composeTestRule.onNodeWithContentDescription("Lägg till Tomat").performClick()
+
+        // Verify repository call
+        assert(fakeRepository.addIngredientCalled)
+    }
+
+    @Test
+    fun detailScreen_clickingAddAllIngredients_callsRepository() {
+        val fakeRepository = FakeRecipeRepository(testRecipe)
+        val viewModel = DetailViewModel(recipeId = 1L, repository = fakeRepository)
+
+        composeTestRule.setContent {
+            SkafferietTheme {
+                DetailScreen(
+                    viewModel = viewModel,
+                    onBackClick = {},
+                    onNavigateToFavorites = {},
+                    onNavigateToShoppingList = {}
+                )
+            }
+        }
+
+        // Click the "Add All" button
+        composeTestRule.onNodeWithText("Lägg till alla").performClick()
+
+        // Verify repository call
+        assert(fakeRepository.addAllIngredientsCalled)
     }
 }
