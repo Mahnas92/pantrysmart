@@ -68,6 +68,11 @@ class OfflineFirstRecipeRepository(
         return recipeDao.isFavorite(id)
     }
 
+    override fun getFavorites(): Flow<List<Recipe>> {
+        return recipeDao.getFavoriteRecipes()
+            .map { entities -> entities.map { it.toDomain() } }
+    }
+
     private suspend fun upsertAll(entities: List<RecipeEntity>) {
         for (entity in entities) {
             val existing = recipeDao.getRecipeByIdOnce(entity.id)

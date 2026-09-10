@@ -11,6 +11,10 @@ import com.example.skafferiet.SkafferietApplication
 import com.example.skafferiet.ui.navigation.Destination
 import com.example.skafferiet.ui.screens.detail.DetailScreen
 import com.example.skafferiet.ui.screens.detail.DetailViewModel
+import com.example.skafferiet.ui.screens.favorites.FavoritesScreen
+import com.example.skafferiet.ui.screens.favorites.FavoritesViewModel
+import com.example.skafferiet.ui.screens.shopping.ShoppingListScreen
+import com.example.skafferiet.ui.screens.shopping.ShoppingListViewModel
 import com.example.skafferiet.ui.screens.search.SearchScreen
 import com.example.skafferiet.ui.screens.search.SearchViewModel
 import com.example.skafferiet.ui.theme.SkafferietTheme
@@ -55,10 +59,27 @@ fun SkafferiApp() {
                         )
                     }
                     is Destination.Favorites -> NavEntry(key) {
-                        Text("Favorites Screen")
+                        val viewModel: FavoritesViewModel = viewModel(
+                            factory = FavoritesViewModel.provideFactory(appContainer.recipeRepository)
+                        )
+                        FavoritesScreen(
+                            viewModel = viewModel,
+                            onRecipeClick = { recipeId ->
+                                backStack.add(Destination.Detail(recipeId))
+                            },
+                            onBackClick = { backStack.remove(key) },
+                            onNavigateToShoppingList = { backStack.add(Destination.ShoppingList) }
+                        )
                     }
                     is Destination.ShoppingList -> NavEntry(key) {
-                        Text("Shopping List Screen")
+                        val viewModel: ShoppingListViewModel = viewModel(
+                            factory = ShoppingListViewModel.provideFactory(appContainer.recipeRepository)
+                        )
+                        ShoppingListScreen(
+                            viewModel = viewModel,
+                            onBackClick = { backStack.remove(key) },
+                            onNavigateToFavorites = { backStack.add(Destination.Favorites) }
+                        )
                     }
                     else -> error("Unknown destination: $key")
                 }

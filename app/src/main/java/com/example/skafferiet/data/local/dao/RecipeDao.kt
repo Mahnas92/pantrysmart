@@ -28,6 +28,9 @@ interface RecipeDao {
     @Query("SELECT EXISTS(SELECT 1 FROM recipes WHERE id = :id AND isFavorite = 1)")
     fun isFavorite(id: Long): Flow<Boolean>
 
+    @Query("SELECT * FROM recipes WHERE isFavorite = 1")
+    fun getFavoriteRecipes(): Flow<List<RecipeEntity>>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(recipe: RecipeEntity)
 

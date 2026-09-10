@@ -26,4 +26,9 @@ interface RecipeRepository {
      * Checks if a recipe is marked as a favorite.
      */
     fun isFavorite(id: Long): Flow<Boolean>
+
+    /**
+     * Fetches all favorited recipes.
+     */
+    fun getFavorites(): Flow<List<Recipe>>
 }
