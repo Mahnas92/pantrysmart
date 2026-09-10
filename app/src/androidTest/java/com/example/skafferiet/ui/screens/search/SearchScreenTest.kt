@@ -36,6 +36,7 @@ class SearchScreenTest {
         override fun getRecipeDetails(id: Long): Flow<Recipe?> = flowOf(null)
         override suspend fun toggleFavorite(recipe: Recipe) {}
         override fun isFavorite(id: Long): Flow<Boolean> = flowOf(false)
+        override fun getFavorites(): Flow<List<Recipe>> = flowOf(emptyList())
     }
 
     @OptIn(ExperimentalTestApi::class)
@@ -47,7 +48,9 @@ class SearchScreenTest {
             SkafferietTheme {
                 SearchScreen(
                     viewModel = viewModel,
-                    onRecipeClick = {}
+                    onRecipeClick = {},
+                    onNavigateToFavorites = {},
+                    onNavigateToShoppingList = {}
                 )
             }
         }

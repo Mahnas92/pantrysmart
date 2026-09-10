@@ -36,6 +36,7 @@ class DetailScreenTest {
         override fun getRecipeDetails(id: Long): Flow<Recipe?> = flowOf(testRecipe)
         override suspend fun toggleFavorite(recipe: Recipe) {}
         override fun isFavorite(id: Long): Flow<Boolean> = flowOf(false)
+        override fun getFavorites(): Flow<List<Recipe>> = flowOf(emptyList())
     }
 
     @Test
@@ -46,7 +47,9 @@ class DetailScreenTest {
             SkafferietTheme {
                 DetailScreen(
                     viewModel = viewModel,
-                    onBackClick = {}
+                    onBackClick = {},
+                    onNavigateToFavorites = {},
+                    onNavigateToShoppingList = {}
                 )
             }
         }
