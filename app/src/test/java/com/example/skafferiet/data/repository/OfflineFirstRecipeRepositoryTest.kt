@@ -1,5 +1,6 @@
 package com.example.skafferiet.data.repository
 
+import android.util.Log
 import com.example.skafferiet.data.api.SpoonacularService
 import com.example.skafferiet.data.api.model.RecipeDto
 import com.example.skafferiet.data.api.model.SearchResponseDto
@@ -10,6 +11,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
+import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
@@ -24,7 +26,14 @@ class OfflineFirstRecipeRepositoryTest {
 
     @Before
     fun setup() {
+        mockkStatic(Log::class)
+        every { Log.e(any(), any(), any()) } returns 0
         repository = OfflineFirstRecipeRepository(service, dao, apiKey)
+    }
+
+    @After
+    fun tearDown() {
+        unmockkStatic(Log::class)
     }
 
     @Test
