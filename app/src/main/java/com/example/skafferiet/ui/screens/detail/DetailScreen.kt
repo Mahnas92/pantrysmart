@@ -25,13 +25,16 @@ import com.example.skafferiet.R
 import com.example.skafferiet.domain.model.Ingredient
 import com.example.skafferiet.domain.model.Recipe
 import com.example.skafferiet.ui.components.SkafferiScaffold
+import com.example.skafferiet.ui.components.SkafferiTopBar
 import com.example.skafferiet.ui.theme.spacing
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetailScreen(
     viewModel: DetailViewModel,
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    onNavigateToFavorites: () -> Unit,
+    onNavigateToShoppingList: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -46,7 +49,9 @@ fun DetailScreen(
                 recipe = state.recipe,
                 isFavorite = state.isFavorite,
                 onBackClick = onBackClick,
-                onFavoriteToggle = { viewModel.toggleFavorite(state.recipe) }
+                onFavoriteToggle = { viewModel.toggleFavorite() },
+                onNavigateToFavorites = onNavigateToFavorites,
+                onNavigateToShoppingList = onNavigateToShoppingList
             )
         }
         is DetailUiState.Error -> {
@@ -63,12 +68,14 @@ fun RecipeDetailContent(
     recipe: Recipe,
     isFavorite: Boolean,
     onBackClick: () -> Unit,
-    onFavoriteToggle: () -> Unit
+    onFavoriteToggle: () -> Unit,
+    onNavigateToFavorites: () -> Unit,
+    onNavigateToShoppingList: () -> Unit
 ) {
     SkafferiScaffold(
         topBar = {
-            TopAppBar(
-                title = { Text(recipe.title, maxLines = 1) },
+            SkafferiTopBar(
+                title = recipe.title,
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
@@ -82,7 +89,9 @@ fun RecipeDetailContent(
                             tint = if (isFavorite) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
                         )
                     }
-                }
+                },
+                onNavigateToFavorites = onNavigateToFavorites,
+                onNavigateToShoppingList = onNavigateToShoppingList
             )
         }
     ) { _ ->

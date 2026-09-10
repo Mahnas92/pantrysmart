@@ -13,4 +13,7 @@ sealed interface Destination : NavKey {
     
     @Serializable
     data object Favorites : Destination
+
+    @Serializable
+    data object ShoppingList : Destination
 }

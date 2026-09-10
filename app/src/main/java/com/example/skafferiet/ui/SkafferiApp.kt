@@ -34,7 +34,9 @@ fun SkafferiApp() {
                             viewModel = viewModel,
                             onRecipeClick = { recipeId ->
                                 backStack.add(Destination.Detail(recipeId))
-                            }
+                            },
+                            onNavigateToFavorites = { backStack.add(Destination.Favorites) },
+                            onNavigateToShoppingList = { backStack.add(Destination.ShoppingList) }
                         )
                     }
                     is Destination.Detail -> NavEntry(key) {
@@ -47,11 +49,16 @@ fun SkafferiApp() {
                         )
                         DetailScreen(
                             viewModel = viewModel,
-                            onBackClick = { backStack.remove(key) }
+                            onBackClick = { backStack.remove(key) },
+                            onNavigateToFavorites = { backStack.add(Destination.Favorites) },
+                            onNavigateToShoppingList = { backStack.add(Destination.ShoppingList) }
                         )
                     }
                     is Destination.Favorites -> NavEntry(key) {
                         Text("Favorites Screen")
+                    }
+                    is Destination.ShoppingList -> NavEntry(key) {
+                        Text("Shopping List Screen")
                     }
                     else -> error("Unknown destination: $key")
                 }

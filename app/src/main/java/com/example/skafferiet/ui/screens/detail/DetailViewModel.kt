@@ -22,6 +22,9 @@ class DetailViewModel(
     private val _uiState = MutableStateFlow<DetailUiState>(DetailUiState.Loading)
     val uiState: StateFlow<DetailUiState> = _uiState.asStateFlow()
 
+    val isFavorite: StateFlow<Boolean> = repository.isFavorite(recipeId)
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
+
     init {
         fetchRecipeDetails()
     }
@@ -46,9 +49,12 @@ class DetailViewModel(
         }
     }
 
-    fun toggleFavorite(recipe: Recipe) {
-        viewModelScope.launch {
-            repository.toggleFavorite(recipe)
+    fun toggleFavorite() {
+        val state = _uiState.value
+        if (state is DetailUiState.Success) {
+            viewModelScope.launch {
+                repository.toggleFavorite(state.recipe)
+            }
         }
     }
 

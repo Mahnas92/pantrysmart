@@ -23,21 +23,26 @@ import coil3.compose.AsyncImage
 import com.example.skafferiet.R
 import com.example.skafferiet.domain.model.Recipe
 import com.example.skafferiet.ui.components.SkafferiScaffold
+import com.example.skafferiet.ui.components.SkafferiTopBar
 import com.example.skafferiet.ui.theme.spacing
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchScreen(
     viewModel: SearchViewModel,
-    onRecipeClick: (Long) -> Unit
+    onRecipeClick: (Long) -> Unit,
+    onNavigateToFavorites: () -> Unit,
+    onNavigateToShoppingList: () -> Unit
 ) {
     val searchQuery by viewModel.searchQuery.collectAsState()
     val uiState by viewModel.uiState.collectAsState()
 
     SkafferiScaffold(
         topBar = {
-            CenterAlignedTopAppBar(
-                title = { Text("Skafferiet") }
+            SkafferiTopBar(
+                title = "Skafferiet",
+                onNavigateToFavorites = onNavigateToFavorites,
+                onNavigateToShoppingList = onNavigateToShoppingList
             )
         }
     ) { paddingValues ->

@@ -19,6 +19,7 @@ fun IngredientDto.toDomain(): Ingredient {
 }
 
 fun RecipeDto.toDomain(): Recipe {
+    // TODO: Fix Image Loading - investigate why some images from Spoonacular are not loading
     val fullImageUrl = if (image != null && !image.startsWith("http")) {
         "https://spoonacular.com/recipeImages/$image"
     } else {
