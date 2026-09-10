@@ -19,10 +19,15 @@ fun IngredientDto.toDomain(): Ingredient {
 }
 
 fun RecipeDto.toDomain(): Recipe {
+    val fullImageUrl = if (image != null && !image.startsWith("http")) {
+        "https://spoonacular.com/recipeImages/$image"
+    } else {
+        image
+    }
     return Recipe(
         id = id.toLong(),
         title = title,
-        image = image,
+        image = fullImageUrl,
         readyInMinutes = readyInMinutes,
         servings = servings,
         sourceUrl = sourceUrl,

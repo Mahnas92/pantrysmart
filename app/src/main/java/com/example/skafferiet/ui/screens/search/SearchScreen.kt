@@ -1,5 +1,6 @@
 package com.example.skafferiet.ui.screens.search
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -111,6 +112,7 @@ fun RecipeCard(
                 .fillMaxWidth()
                 .height(120.dp)
         ) {
+            Log.d("AsyncImage", "Loading card image for ${recipe.title}: ${recipe.image}")
             AsyncImage(
                 model = recipe.image,
                 contentDescription = recipe.title,

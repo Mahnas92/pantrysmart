@@ -39,6 +39,7 @@ fun SkafferiApp() {
                     }
                     is Destination.Detail -> NavEntry(key) {
                         val viewModel: DetailViewModel = viewModel(
+                            key = key.recipeId.toString(),
                             factory = DetailViewModel.provideFactory(
                                 recipeId = key.recipeId,
                                 repository = appContainer.recipeRepository

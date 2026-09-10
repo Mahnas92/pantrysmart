@@ -1,5 +1,6 @@
 package com.example.skafferiet.ui.screens.detail
 
+import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -135,6 +136,7 @@ fun RecipeDetailContent(
 
 @Composable
 fun RecipeImage(imageUrl: String?, title: String) {
+    Log.d("AsyncImage", "Loading image for $title: $imageUrl")
     Card(
         modifier = Modifier
             .fillMaxWidth()
