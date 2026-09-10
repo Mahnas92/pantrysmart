@@ -4,6 +4,7 @@ import com.example.skafferiet.data.api.model.IngredientDto
 import com.example.skafferiet.data.api.model.RecipeDto
 import com.example.skafferiet.data.local.entity.IngredientEntity
 import com.example.skafferiet.data.local.entity.RecipeEntity
+import com.example.skafferiet.data.local.entity.ShoppingListItemEntity
 import com.example.skafferiet.domain.model.Ingredient
 import com.example.skafferiet.domain.model.Recipe
 
@@ -87,5 +88,24 @@ fun Recipe.toEntity(): RecipeEntity {
         instructions = instructions,
         ingredients = ingredients.map { it.toEntity() },
         isFavorite = isFavorite
+    )
+}
+
+fun ShoppingListItemEntity.toDomain(): Ingredient {
+    return Ingredient(
+        id = null,
+        name = name,
+        original = "$amount $unit $name",
+        amount = amount,
+        unit = unit,
+        image = null
+    )
+}
+
+fun Ingredient.toShoppingListItemEntity(): ShoppingListItemEntity {
+    return ShoppingListItemEntity(
+        name = name,
+        amount = amount,
+        unit = unit
     )
 }

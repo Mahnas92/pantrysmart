@@ -1,5 +1,6 @@
 package com.example.skafferiet.domain.repository
 
+import com.example.skafferiet.domain.model.Ingredient
 import com.example.skafferiet.domain.model.Recipe
 import kotlinx.coroutines.flow.Flow
 
@@ -31,4 +32,24 @@ interface RecipeRepository {
      * Fetches all favorited recipes.
      */
     fun getFavorites(): Flow<List<Recipe>>
+
+    /**
+     * Fetches the explicit shopping list.
+     */
+    fun getShoppingList(): Flow<List<Ingredient>>
+
+    /**
+     * Adds multiple ingredients to the shopping list.
+     */
+    suspend fun addIngredientsToList(ingredients: List<Ingredient>)
+
+    /**
+     * Adds a single ingredient to the shopping list.
+     */
+    suspend fun addIngredientToList(ingredient: Ingredient)
+
+    /**
+     * Deletes an ingredient from the shopping list by name.
+     */
+    suspend fun deleteIngredientFromList(name: String)
 }

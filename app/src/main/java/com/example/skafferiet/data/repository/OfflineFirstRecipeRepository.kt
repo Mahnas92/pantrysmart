@@ -3,21 +3,22 @@ package com.example.skafferiet.data.repository
 import android.util.Log
 import com.example.skafferiet.data.api.SpoonacularService
 import com.example.skafferiet.data.local.dao.RecipeDao
+import com.example.skafferiet.data.local.dao.ShoppingListDao
 import com.example.skafferiet.data.local.entity.RecipeEntity
 import com.example.skafferiet.data.mapper.toDomain
 import com.example.skafferiet.data.mapper.toEntity
+import com.example.skafferiet.data.mapper.toShoppingListItemEntity
+import com.example.skafferiet.domain.model.Ingredient
 import com.example.skafferiet.domain.model.Recipe
 import com.example.skafferiet.domain.repository.RecipeRepository
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.channelFlow
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class OfflineFirstRecipeRepository(
     private val spoonacularService: SpoonacularService,
     private val recipeDao: RecipeDao,
-    private val apiKey: String
+    private val shoppingListDao: ShoppingListDao,
+    private val apiKey: String,
 ) : RecipeRepository {
 
     override fun getRecipes(query: String): Flow<List<Recipe>> = channelFlow {
@@ -73,6 +74,31 @@ class OfflineFirstRecipeRepository(
             .map { entities -> entities.map { it.toDomain() } }
     }
 
+    override fun getShoppingList(): Flow<List<Ingredient>> {
+        return shoppingListDao.getAllItems()
+            .map { entities -> entities.map { it.toDomain() } }
+    }
+
+    override suspend fun addIngredientsToList(ingredients: List<Ingredient>) {
+        ingredients.forEach { addIngredientToList(it) }
+    }
+
+    override suspend fun addIngredientToList(ingredient: Ingredient) {
+        val existing = shoppingListDao.getItemByName(ingredient.name)
+        if (existing != null) {
+            val updated = existing.copy(
+                amount = existing.amount + ingredient.amount
+            )
+            shoppingListDao.insertItem(updated)
+        } else {
+            shoppingListDao.insertItem(ingredient.toShoppingListItemEntity())
+        }
+    }
+
+    override suspend fun deleteIngredientFromList(name: String) {
+        shoppingListDao.deleteItemByName(name)
+    }
+
     private suspend fun upsertAll(entities: List<RecipeEntity>) {
         for (entity in entities) {
             val existing = recipeDao.getRecipeByIdOnce(entity.id)
@@ -80,7 +106,7 @@ class OfflineFirstRecipeRepository(
                 // Merge data: preserve existing details if the new entity has less information
                 val merged = entity.copy(
                     isFavorite = existing.isFavorite,
-                    ingredients = if (entity.ingredients.isNotEmpty()) entity.ingredients else existing.ingredients,
+                    ingredients = entity.ingredients.ifEmpty { existing.ingredients },
                     instructions = entity.instructions ?: existing.instructions,
                     summary = entity.summary ?: existing.summary,
                     readyInMinutes = entity.readyInMinutes ?: existing.readyInMinutes,

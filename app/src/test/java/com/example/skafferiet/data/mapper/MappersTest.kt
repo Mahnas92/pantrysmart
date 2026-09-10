@@ -4,6 +4,7 @@ import com.example.skafferiet.data.api.model.IngredientDto
 import com.example.skafferiet.data.api.model.RecipeDto
 import com.example.skafferiet.data.local.entity.IngredientEntity
 import com.example.skafferiet.data.local.entity.RecipeEntity
+import com.example.skafferiet.data.local.entity.ShoppingListItemEntity
 import com.example.skafferiet.domain.model.Ingredient
 import com.example.skafferiet.domain.model.Recipe
 import org.junit.Assert.assertEquals
@@ -98,5 +99,26 @@ class MappersTest {
         assertEquals("Title", entity.title)
         assertEquals(1, entity.ingredients.size)
         assertEquals(true, entity.isFavorite)
+    }
+
+    @Test
+    fun `ShoppingListItemEntity toDomain maps correctly`() {
+        val entity = ShoppingListItemEntity(name = "Sugar", amount = 2.0, unit = "cups")
+        val domain = entity.toDomain()
+
+        assertEquals("Sugar", domain.name)
+        assertEquals(2.0, domain.amount, 0.0)
+        assertEquals("cups", domain.unit)
+        assertEquals("2.0 cups Sugar", domain.original)
+    }
+
+    @Test
+    fun `Ingredient toShoppingListItemEntity maps correctly`() {
+        val domain = Ingredient(id = 1, name = "Sugar", original = "2 cups Sugar", amount = 2.0, unit = "cups", image = null)
+        val entity = domain.toShoppingListItemEntity()
+
+        assertEquals("Sugar", entity.name)
+        assertEquals(2.0, entity.amount, 0.0)
+        assertEquals("cups", entity.unit)
     }
 }

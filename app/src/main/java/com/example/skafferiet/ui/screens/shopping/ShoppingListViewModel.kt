@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
 data class AggregatedIngredient(
     val name: String,
@@ -21,9 +22,9 @@ class ShoppingListViewModel(
     private val repository: RecipeRepository
 ) : ViewModel() {
 
-    val shoppingList: StateFlow<List<AggregatedIngredient>> = repository.getFavorites()
-        .map { recipes ->
-            recipes.flatMap { it.ingredients }
+    val shoppingList: StateFlow<List<AggregatedIngredient>> = repository.getShoppingList()
+        .map { ingredients ->
+            ingredients
                 .groupBy { it.name.lowercase().trim() }
                 .map { (name, ingredients) ->
                     AggregatedIngredient(
@@ -39,6 +40,12 @@ class ShoppingListViewModel(
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = emptyList()
         )
+
+    fun deleteIngredient(name: String) {
+        viewModelScope.launch {
+            repository.deleteIngredientFromList(name)
+        }
+    }
 
     companion object {
         fun provideFactory(repository: RecipeRepository): ViewModelProvider.Factory =

@@ -6,12 +6,15 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.example.skafferiet.data.local.dao.RecipeDao
+import com.example.skafferiet.data.local.dao.ShoppingListDao
 import com.example.skafferiet.data.local.entity.RecipeEntity
+import com.example.skafferiet.data.local.entity.ShoppingListItemEntity
 
-@Database(entities = [RecipeEntity::class], version = 2, exportSchema = true)
+@Database(entities = [RecipeEntity::class, ShoppingListItemEntity::class], version = 3, exportSchema = true)
 @TypeConverters(RecipeTypeConverters::class)
 abstract class SkafferiDatabase : RoomDatabase() {
     abstract fun recipeDao(): RecipeDao
+    abstract fun shoppingListDao(): ShoppingListDao
 
     companion object {
         @Volatile

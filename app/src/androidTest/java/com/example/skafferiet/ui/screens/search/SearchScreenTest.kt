@@ -2,6 +2,7 @@ package com.example.skafferiet.ui.screens.search
 
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
+import com.example.skafferiet.domain.model.Ingredient
 import com.example.skafferiet.domain.model.Recipe
 import com.example.skafferiet.domain.repository.RecipeRepository
 import com.example.skafferiet.ui.theme.SkafferietTheme
@@ -37,6 +38,10 @@ class SearchScreenTest {
         override suspend fun toggleFavorite(recipe: Recipe) {}
         override fun isFavorite(id: Long): Flow<Boolean> = flowOf(false)
         override fun getFavorites(): Flow<List<Recipe>> = flowOf(emptyList())
+        override fun getShoppingList(): Flow<List<Ingredient>> = flowOf(emptyList())
+        override suspend fun addIngredientsToList(ingredients: List<Ingredient>) {}
+        override suspend fun addIngredientToList(ingredient: Ingredient) {}
+        override suspend fun deleteIngredientFromList(name: String) {}
     }
 
     @OptIn(ExperimentalTestApi::class)

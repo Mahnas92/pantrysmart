@@ -5,6 +5,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -50,7 +51,7 @@ fun ShoppingListScreen(
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = "Din inköpslista är tom. Lägg till recept i favoriter för att se ingredienser här.",
+                    text = "Din inköpslista är tom. Lägg till ingredienser från receptsidan för att se dem här.",
                     style = MaterialTheme.typography.bodyLarge,
                     modifier = Modifier.padding(MaterialTheme.spacing.large),
                     textAlign = TextAlign.Center
@@ -98,6 +99,13 @@ fun ShoppingListScreen(
                                     text = "${formatAmount(ingredient.amount)} ${ingredient.unit}",
                                     style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+                            IconButton(onClick = { viewModel.deleteIngredient(ingredient.name) }) {
+                                Icon(
+                                    imageVector = Icons.Default.Delete,
+                                    contentDescription = "Ta bort ${ingredient.name}",
+                                    tint = MaterialTheme.colorScheme.error
                                 )
                             }
                         }

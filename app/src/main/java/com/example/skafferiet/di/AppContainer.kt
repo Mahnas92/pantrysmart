@@ -27,6 +27,7 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
         OfflineFirstRecipeRepository(
             spoonacularService = RetrofitClient.spoonacularService,
             recipeDao = database.recipeDao(),
+            shoppingListDao = database.shoppingListDao(),
             apiKey = BuildConfig.SPOONACULAR_API_KEY
         )
     }

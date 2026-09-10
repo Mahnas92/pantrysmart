@@ -3,6 +3,7 @@ package com.example.skafferiet.ui.screens.detail
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.example.skafferiet.domain.model.Ingredient
 import com.example.skafferiet.domain.model.Recipe
 import com.example.skafferiet.domain.repository.RecipeRepository
 import kotlinx.coroutines.flow.*
@@ -55,6 +56,18 @@ class DetailViewModel(
             viewModelScope.launch {
                 repository.toggleFavorite(state.recipe)
             }
+        }
+    }
+
+    fun addIngredientToShoppingList(ingredient: Ingredient) {
+        viewModelScope.launch {
+            repository.addIngredientToList(ingredient)
+        }
+    }
+
+    fun addAllIngredientsToShoppingList(ingredients: List<Ingredient>) {
+        viewModelScope.launch {
+            repository.addIngredientsToList(ingredients)
         }
     }
 

@@ -6,6 +6,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Warning
@@ -34,7 +35,7 @@ fun DetailScreen(
     viewModel: DetailViewModel,
     onBackClick: () -> Unit,
     onNavigateToFavorites: () -> Unit,
-    onNavigateToShoppingList: () -> Unit
+    onNavigateToShoppingList: () -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -50,6 +51,8 @@ fun DetailScreen(
                 isFavorite = state.isFavorite,
                 onBackClick = onBackClick,
                 onFavoriteToggle = { viewModel.toggleFavorite() },
+                onAddIngredient = { viewModel.addIngredientToShoppingList(it) },
+                onAddAllIngredients = { viewModel.addAllIngredientsToShoppingList(it) },
                 onNavigateToFavorites = onNavigateToFavorites,
                 onNavigateToShoppingList = onNavigateToShoppingList
             )
@@ -69,6 +72,8 @@ fun RecipeDetailContent(
     isFavorite: Boolean,
     onBackClick: () -> Unit,
     onFavoriteToggle: () -> Unit,
+    onAddIngredient: (Ingredient) -> Unit,
+    onAddAllIngredients: (List<Ingredient>) -> Unit,
     onNavigateToFavorites: () -> Unit,
     onNavigateToShoppingList: () -> Unit
 ) {
@@ -115,7 +120,10 @@ fun RecipeDetailContent(
                     ) {
                         RecipeImage(recipe.image, recipe.title)
                         Spacer(modifier = Modifier.height(MaterialTheme.spacing.medium))
-                        IngredientsList(recipe.ingredients)
+                        IngredientsList(
+                            ingredients = recipe.ingredients,
+                            onAddIngredient = onAddIngredient
+                        ) { onAddAllIngredients(recipe.ingredients) }
                     }
                     Column(
                         modifier = Modifier
@@ -134,7 +142,10 @@ fun RecipeDetailContent(
                 ) {
                     RecipeImage(recipe.image, recipe.title)
                     Spacer(modifier = Modifier.height(MaterialTheme.spacing.medium))
-                    IngredientsList(recipe.ingredients)
+                    IngredientsList(
+                        ingredients = recipe.ingredients,
+                        onAddIngredient = onAddIngredient
+                    ) { onAddAllIngredients(recipe.ingredients) }
                     Spacer(modifier = Modifier.height(MaterialTheme.spacing.large))
                     InstructionsSection(recipe.instructions)
                 }
@@ -164,19 +175,51 @@ fun RecipeImage(imageUrl: String?, title: String) {
 }
 
 @Composable
-fun IngredientsList(ingredients: List<Ingredient>) {
-    Text(
-        text = "Ingredienser",
-        style = MaterialTheme.typography.titleLarge,
-        fontWeight = FontWeight.Bold
-    )
+fun IngredientsList(
+    ingredients: List<Ingredient>,
+    onAddIngredient: (Ingredient) -> Unit,
+    onAddAll: () -> Unit
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = "Ingredienser",
+            style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.Bold
+        )
+        TextButton(onClick = onAddAll) {
+            Icon(Icons.Default.Add, contentDescription = null)
+            Spacer(modifier = Modifier.width(MaterialTheme.spacing.small))
+            Text("Lägg till alla")
+        }
+    }
     Spacer(modifier = Modifier.height(MaterialTheme.spacing.small))
     ingredients.forEach { ingredient ->
-        Text(
-            text = "• ${ingredient.original}",
-            style = MaterialTheme.typography.bodyMedium,
-            modifier = Modifier.padding(vertical = 2.dp)
-        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "• ${ingredient.original}",
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(vertical = 2.dp)
+            )
+            IconButton(
+                onClick = { onAddIngredient(ingredient) },
+                modifier = Modifier.size(24.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = "Lägg till ${ingredient.name}",
+                    modifier = Modifier.size(16.dp)
+                )
+            }
+        }
     }
 }
 
