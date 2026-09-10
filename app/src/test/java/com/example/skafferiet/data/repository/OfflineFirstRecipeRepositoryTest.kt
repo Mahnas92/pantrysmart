@@ -42,7 +42,7 @@ class OfflineFirstRecipeRepositoryTest {
         coEvery { service.searchRecipes(query, 20, apiKey) } returns searchResponse
         coEvery { dao.getRecipeByIdOnce(1L) } returns null
         coEvery { dao.insert(any()) } just Runs
-        every { dao.getAllRecipes() } returns flowOf(emptyList())
+        every { dao.searchRecipes(query) } returns flowOf(emptyList())
 
         // When
         repository.getRecipes(query).first()
@@ -60,12 +60,16 @@ class OfflineFirstRecipeRepositoryTest {
             id = 1L,
             title = "Cached Pasta",
             image = null,
+            readyInMinutes = 30,
+            servings = 4,
+            sourceUrl = null,
             summary = null,
+            instructions = null,
             ingredients = emptyList()
         )
         
         coEvery { service.searchRecipes(query, 20, apiKey) } throws Exception("Network error")
-        every { dao.getAllRecipes() } returns flowOf(listOf(cachedRecipe))
+        every { dao.searchRecipes(query) } returns flowOf(listOf(cachedRecipe))
 
         // When
         val result = repository.getRecipes(query).first()
@@ -91,7 +95,11 @@ class OfflineFirstRecipeRepositoryTest {
             id = 1L,
             title = "Old Title",
             image = null,
+            readyInMinutes = 30,
+            servings = 4,
+            sourceUrl = null,
             summary = null,
+            instructions = null,
             ingredients = emptyList(),
             isFavorite = true
         )
@@ -99,7 +107,7 @@ class OfflineFirstRecipeRepositoryTest {
         coEvery { service.searchRecipes(query, 20, apiKey) } returns searchResponse
         coEvery { dao.getRecipeByIdOnce(1L) } returns existingRecipe
         coEvery { dao.insert(any()) } just Runs
-        every { dao.getAllRecipes() } returns flowOf(listOf(existingRecipe))
+        every { dao.searchRecipes(query) } returns flowOf(listOf(existingRecipe))
 
         // When
         repository.getRecipes(query).first()

@@ -9,7 +9,9 @@ import com.example.skafferiet.domain.model.Recipe
 import com.example.skafferiet.domain.repository.RecipeRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.channelFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 class OfflineFirstRecipeRepository(
     private val spoonacularService: SpoonacularService,
@@ -17,32 +19,42 @@ class OfflineFirstRecipeRepository(
     private val apiKey: String
 ) : RecipeRepository {
 
-    override fun getRecipes(query: String): Flow<List<Recipe>> {
-        return recipeDao.getAllRecipes()
-            .map { entities -> entities.map { it.toDomain() } }
-            .onStart {
-                try {
-                    val response = spoonacularService.searchRecipes(query, 20, apiKey)
-                    val entities = response.results.map { it.toDomain().toEntity() }
-                    upsertAll(entities)
-                } catch (e: Exception) {
-                    // Basic error handling as requested: ensures app doesn't crash
-                    // and falls back to cached data from the database.
-                }
-            }
+    override fun getRecipes(query: String): Flow<List<Recipe>> = channelFlow {
+        // Observe the database and send updates to the channel
+        val dbJob = launch {
+            recipeDao.searchRecipes(query)
+                .map { entities -> entities.map { it.toDomain() } }
+                .collect { send(it) }
+        }
+
+        // Fetch from network and update database
+        try {
+            val response = spoonacularService.searchRecipes(query, 20, apiKey)
+            val entities = response.results.map { it.toDomain().toEntity() }
+            upsertAll(entities)
+        } catch (e: Exception) {
+            // Error handling: fallback is already handled by the DB observer
+        }
+
+        // Wait for the DB observation to complete (which happens when the flow is cancelled)
+        dbJob.join()
     }
 
-    override fun getRecipeDetails(id: Long): Flow<Recipe?> {
-        return recipeDao.getRecipeById(id)
-            .map { it?.toDomain() }
-            .onStart {
-                try {
-                    val dto = spoonacularService.getRecipeInformation(id.toInt(), apiKey)
-                    upsertAll(listOf(dto.toDomain().toEntity()))
-                } catch (e: Exception) {
-                    // Fallback to cache
-                }
-            }
+    override fun getRecipeDetails(id: Long): Flow<Recipe?> = channelFlow {
+        val dbJob = launch {
+            recipeDao.getRecipeById(id)
+                .map { it?.toDomain() }
+                .collect { send(it) }
+        }
+
+        try {
+            val dto = spoonacularService.getRecipeInformation(id.toInt(), apiKey)
+            upsertAll(listOf(dto.toDomain().toEntity()))
+        } catch (e: Exception) {
+            // Fallback to cache
+        }
+
+        dbJob.join()
     }
 
     override suspend fun toggleFavorite(recipe: Recipe) {

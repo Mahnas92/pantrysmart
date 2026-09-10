@@ -40,16 +40,18 @@ fun SearchScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
+                .padding(horizontal = MaterialTheme.spacing.medium)
         ) {
             OutlinedTextField(
                 value = searchQuery,
                 onValueChange = viewModel::onQueryChange,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = MaterialTheme.spacing.medium),
+                    .padding(vertical = MaterialTheme.spacing.medium),
                 placeholder = { Text("Sök recept...") },
                 leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
-                singleLine = true
+                singleLine = true,
+                shape = MaterialTheme.shapes.large
             )
 
             when (val state = uiState) {
@@ -61,9 +63,10 @@ fun SearchScreen(
                 is SearchUiState.Success -> {
                     LazyColumn(
                         verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.medium),
-                        contentPadding = PaddingValues(bottom = MaterialTheme.spacing.large)
+                        contentPadding = PaddingValues(bottom = MaterialTheme.spacing.large),
+                        modifier = Modifier.fillMaxSize()
                     ) {
-                        items(state.recipes) { recipe ->
+                        items(state.recipes, key = { it.id }) { recipe ->
                             RecipeCard(
                                 recipe = recipe,
                                 onClick = { onRecipeClick(recipe.id) }
@@ -96,12 +99,13 @@ fun RecipeCard(
         modifier = modifier
             .fillMaxWidth()
             .clickable(onClick = onClick),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        shape = MaterialTheme.shapes.large
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(100.dp)
+                .height(120.dp)
         ) {
             AsyncImage(
                 model = recipe.image,

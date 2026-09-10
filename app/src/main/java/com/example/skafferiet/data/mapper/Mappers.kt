@@ -34,12 +34,12 @@ fun RecipeDto.toDomain(): Recipe {
 
 fun IngredientEntity.toDomain(): Ingredient {
     return Ingredient(
-        id = null,
+        id = id,
         name = name,
-        original = "$amount $unit $name",
+        original = original,
         amount = amount,
         unit = unit,
-        image = null
+        image = image
     )
 }
 
@@ -48,21 +48,24 @@ fun RecipeEntity.toDomain(): Recipe {
         id = id,
         title = title,
         image = image,
-        readyInMinutes = null,
-        servings = null,
-        sourceUrl = null,
+        readyInMinutes = readyInMinutes,
+        servings = servings,
+        sourceUrl = sourceUrl,
         ingredients = ingredients.map { it.toDomain() },
         summary = summary,
-        instructions = null,
+        instructions = instructions,
         isFavorite = isFavorite
     )
 }
 
 fun Ingredient.toEntity(): IngredientEntity {
     return IngredientEntity(
+        id = id,
         name = name,
+        original = original,
         amount = amount,
-        unit = unit
+        unit = unit,
+        image = image
     )
 }
 
@@ -71,7 +74,11 @@ fun Recipe.toEntity(): RecipeEntity {
         id = id,
         title = title,
         image = image,
+        readyInMinutes = readyInMinutes,
+        servings = servings,
+        sourceUrl = sourceUrl,
         summary = summary,
+        instructions = instructions,
         ingredients = ingredients.map { it.toEntity() },
         isFavorite = isFavorite
     )
