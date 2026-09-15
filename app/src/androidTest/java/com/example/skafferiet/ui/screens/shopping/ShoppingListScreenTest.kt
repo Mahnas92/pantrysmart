@@ -5,7 +5,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import com.example.skafferiet.domain.model.Ingredient
 import com.example.skafferiet.domain.model.Recipe
 import com.example.skafferiet.domain.repository.RecipeRepository
-import com.example.skafferiet.ui.theme.SkafferietTheme
+import com.example.skafferiet.ui.theme.PantrySmartTheme
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import org.junit.Rule
@@ -17,8 +17,8 @@ class ShoppingListScreenTest {
     val composeTestRule = createComposeRule()
 
     private val testIngredients = listOf(
-        Ingredient(id = 1, name = "Tomat", original = "2st Tomater", amount = 2.0, unit = "st", image = null),
-        Ingredient(id = 2, name = "Lök", original = "1st Lök", amount = 1.0, unit = "st", image = null)
+        Ingredient(id = 1, name = "Tomato", original = "2 Tomatoes", amount = 2.0, unit = "pcs", image = null),
+        Ingredient(id = 2, name = "Onion", original = "1 Onion", amount = 1.0, unit = "pcs", image = null)
     )
 
     private class FakeRecipeRepository(val ingredients: List<Ingredient>) : RecipeRepository {
@@ -45,7 +45,7 @@ class ShoppingListScreenTest {
         val viewModel = ShoppingListViewModel(repository = fakeRepository)
 
         composeTestRule.setContent {
-            SkafferietTheme {
+            PantrySmartTheme {
                 ShoppingListScreen(
                     viewModel = viewModel,
                     onBackClick = {},
@@ -55,8 +55,8 @@ class ShoppingListScreenTest {
         }
 
         // Check if items are displayed (ShoppingListViewModel capitalizes names)
-        composeTestRule.onNodeWithText("Tomat").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Lök").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Tomato").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Onion").assertIsDisplayed()
     }
 
     @Test
@@ -65,7 +65,7 @@ class ShoppingListScreenTest {
         val viewModel = ShoppingListViewModel(repository = fakeRepository)
 
         composeTestRule.setContent {
-            SkafferietTheme {
+            PantrySmartTheme {
                 ShoppingListScreen(
                     viewModel = viewModel,
                     onBackClick = {},
@@ -74,12 +74,12 @@ class ShoppingListScreenTest {
             }
         }
 
-        // Click the trash button for "Tomat"
-        // Content description is "Ta bort Tomat" in ShoppingListScreen.kt
-        composeTestRule.onNodeWithContentDescription("Ta bort Tomat").performClick()
+        // Click the trash button for "Tomato"
+        // Content description is "Remove Tomato" in ShoppingListScreen.kt
+        composeTestRule.onNodeWithContentDescription("Remove Tomato").performClick()
 
         // Verify repository call
         assert(fakeRepository.deleteIngredientCalled)
-        assert(fakeRepository.deletedIngredientName?.lowercase() == "tomat")
+        assert(fakeRepository.deletedIngredientName?.lowercase() == "tomato")
     }
 }

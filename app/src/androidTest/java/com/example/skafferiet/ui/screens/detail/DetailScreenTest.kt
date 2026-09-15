@@ -6,7 +6,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import com.example.skafferiet.domain.model.Ingredient
 import com.example.skafferiet.domain.model.Recipe
 import com.example.skafferiet.domain.repository.RecipeRepository
-import com.example.skafferiet.ui.theme.SkafferietTheme
+import com.example.skafferiet.ui.theme.PantrySmartTheme
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import org.junit.Rule
@@ -19,16 +19,16 @@ class DetailScreenTest {
 
     private val testRecipe = Recipe(
         id = 1L,
-        title = "Test Recept",
+        title = "Test Recipe",
         image = null,
         readyInMinutes = 30,
         servings = 4,
         sourceUrl = null,
         ingredients = listOf(
-            Ingredient(id = 1, name = "Tomat", original = "2st Tomater", amount = 2.0, unit = "st", image = null)
+            Ingredient(id = 1, name = "Tomato", original = "2 Tomatoes", amount = 2.0, unit = "pcs", image = null)
         ),
-        summary = "En test sammanfattning",
-        instructions = "Test instruktioner"
+        summary = "A test summary",
+        instructions = "Test instructions"
     )
 
     private class FakeRecipeRepository(val recipe: Recipe) : RecipeRepository {
@@ -56,7 +56,7 @@ class DetailScreenTest {
         val viewModel = DetailViewModel(recipeId = 1L, repository = fakeRepository)
 
         composeTestRule.setContent {
-            SkafferietTheme {
+            PantrySmartTheme {
                 DetailScreen(
                     viewModel = viewModel,
                     onBackClick = {},
@@ -67,13 +67,13 @@ class DetailScreenTest {
         }
 
         // Check if title is displayed
-        composeTestRule.onNodeWithText("Test Recept").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Test Recipe").assertIsDisplayed()
 
         // Check if ingredients are displayed
-        composeTestRule.onNodeWithText("• 2st Tomater").assertIsDisplayed()
+        composeTestRule.onNodeWithText("• 2 Tomatoes").assertIsDisplayed()
 
         // Check if instructions are displayed
-        composeTestRule.onNodeWithText("Test instruktioner").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Test instructions").assertIsDisplayed()
     }
 
     @Test
@@ -82,7 +82,7 @@ class DetailScreenTest {
         val viewModel = DetailViewModel(recipeId = 1L, repository = fakeRepository)
 
         composeTestRule.setContent {
-            SkafferietTheme {
+            PantrySmartTheme {
                 DetailScreen(
                     viewModel = viewModel,
                     onBackClick = {},
@@ -93,7 +93,7 @@ class DetailScreenTest {
         }
 
         // Click the individual add button
-        composeTestRule.onNodeWithContentDescription("Lägg till Tomat").performClick()
+        composeTestRule.onNodeWithContentDescription("Add Tomato").performClick()
 
         // Verify repository call
         assert(fakeRepository.addIngredientCalled)
@@ -105,7 +105,7 @@ class DetailScreenTest {
         val viewModel = DetailViewModel(recipeId = 1L, repository = fakeRepository)
 
         composeTestRule.setContent {
-            SkafferietTheme {
+            PantrySmartTheme {
                 DetailScreen(
                     viewModel = viewModel,
                     onBackClick = {},
@@ -116,7 +116,7 @@ class DetailScreenTest {
         }
 
         // Click the "Add All" button
-        composeTestRule.onNodeWithText("Lägg till alla").performClick()
+        composeTestRule.onNodeWithText("Add All").performClick()
 
         // Verify repository call
         assert(fakeRepository.addAllIngredientsCalled)

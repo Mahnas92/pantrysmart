@@ -10,11 +10,13 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
-import com.example.skafferiet.ui.components.SkafferiScaffold
-import com.example.skafferiet.ui.components.SkafferiTopBar
+import com.example.skafferiet.R
+import com.example.skafferiet.ui.components.PantryScaffold
+import com.example.skafferiet.ui.components.PantryTopBar
 import com.example.skafferiet.ui.theme.spacing
 import java.util.*
 
@@ -30,13 +32,13 @@ fun ShoppingListScreen(
     // Local state for checked items (since we don't have a database for shopping list yet)
     val checkedItems = remember { mutableStateMapOf<String, Boolean>() }
 
-    SkafferiScaffold(
+    PantryScaffold(
         topBar = {
-            SkafferiTopBar(
-                title = "Inköpslista",
+            PantryTopBar(
+                title = stringResource(R.string.shopping_list_title),
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back_button_cd))
                     }
                 },
                 onNavigateToFavorites = onNavigateToFavorites
@@ -51,7 +53,7 @@ fun ShoppingListScreen(
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = "Din inköpslista är tom. Lägg till ingredienser från receptsidan för att se dem här.",
+                    text = stringResource(R.string.empty_shopping_list_message),
                     style = MaterialTheme.typography.bodyLarge,
                     modifier = Modifier.padding(MaterialTheme.spacing.large),
                     textAlign = TextAlign.Center
@@ -96,7 +98,11 @@ fun ShoppingListScreen(
                                     textDecoration = if (isChecked) TextDecoration.LineThrough else null
                                 )
                                 Text(
-                                    text = "${formatAmount(ingredient.amount)} ${ingredient.unit}",
+                                    text = stringResource(
+                                        R.string.amount_unit_format,
+                                        formatAmount(ingredient.amount),
+                                        ingredient.unit
+                                    ),
                                     style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
@@ -104,7 +110,7 @@ fun ShoppingListScreen(
                             IconButton(onClick = { viewModel.deleteIngredient(ingredient.name) }) {
                                 Icon(
                                     imageVector = Icons.Default.Delete,
-                                    contentDescription = "Ta bort ${ingredient.name}",
+                                    contentDescription = stringResource(R.string.remove_ingredient_cd, ingredient.name),
                                     tint = MaterialTheme.colorScheme.error
                                 )
                             }

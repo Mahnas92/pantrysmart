@@ -11,8 +11,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.example.skafferiet.ui.components.SkafferiScaffold
-import com.example.skafferiet.ui.components.SkafferiTopBar
+import androidx.compose.ui.res.stringResource
+import com.example.skafferiet.R
+import com.example.skafferiet.ui.components.PantryScaffold
+import com.example.skafferiet.ui.components.PantryTopBar
 import com.example.skafferiet.ui.screens.search.RecipeCard
 import com.example.skafferiet.ui.theme.spacing
 
@@ -26,13 +28,13 @@ fun FavoritesScreen(
 ) {
     val favorites by viewModel.favorites.collectAsState()
 
-    SkafferiScaffold(
+    PantryScaffold(
         topBar = {
-            SkafferiTopBar(
-                title = "Favoriter",
+            PantryTopBar(
+                title = stringResource(R.string.favorites_title),
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back_button_cd))
                     }
                 },
                 onNavigateToShoppingList = onNavigateToShoppingList
@@ -47,7 +49,7 @@ fun FavoritesScreen(
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = "Du har inga sparade favoriter än.",
+                    text = stringResource(R.string.no_favorites_yet),
                     style = MaterialTheme.typography.bodyLarge
                 )
             }

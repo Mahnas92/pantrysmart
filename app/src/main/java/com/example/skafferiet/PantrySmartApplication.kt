@@ -4,7 +4,7 @@ import android.app.Application
 import com.example.skafferiet.di.AppContainer
 import com.example.skafferiet.di.DefaultAppContainer
 
-class SkafferietApplication : Application() {
+class PantrySmartApplication : Application() {
     /**
      * AppContainer instance used by the rest of the classes to obtain dependencies
      */

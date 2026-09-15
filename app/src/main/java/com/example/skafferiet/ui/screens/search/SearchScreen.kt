@@ -17,13 +17,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.example.skafferiet.R
 import com.example.skafferiet.domain.model.Recipe
-import com.example.skafferiet.ui.components.SkafferiScaffold
-import com.example.skafferiet.ui.components.SkafferiTopBar
+import com.example.skafferiet.ui.components.PantryScaffold
+import com.example.skafferiet.ui.components.PantryTopBar
 import com.example.skafferiet.ui.theme.spacing
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -37,10 +38,10 @@ fun SearchScreen(
     val searchQuery by viewModel.searchQuery.collectAsState()
     val uiState by viewModel.uiState.collectAsState()
 
-    SkafferiScaffold(
+    PantryScaffold(
         topBar = {
-            SkafferiTopBar(
-                title = "Skafferiet",
+            PantryTopBar(
+                title = stringResource(R.string.app_name),
                 onNavigateToFavorites = onNavigateToFavorites,
                 onNavigateToShoppingList = onNavigateToShoppingList
             )
@@ -58,7 +59,7 @@ fun SearchScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = MaterialTheme.spacing.medium),
-                placeholder = { Text("Sök recept...") },
+                placeholder = { Text(stringResource(R.string.search_recipes_placeholder)) },
                 leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
                 singleLine = true,
                 shape = MaterialTheme.shapes.large
@@ -86,12 +87,15 @@ fun SearchScreen(
                 }
                 is SearchUiState.Empty -> {
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Text("Inga recept hittades.")
+                        Text(stringResource(R.string.no_recipes_found))
                     }
                 }
                 is SearchUiState.Error -> {
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Text("Ett fel uppstod: ${state.message}", color = MaterialTheme.colorScheme.error)
+                        Text(
+                            text = stringResource(R.string.error_occurred, state.message),
+                            color = MaterialTheme.colorScheme.error
+                        )
                     }
                 }
             }
@@ -142,7 +146,7 @@ fun RecipeCard(
                 )
                 recipe.readyInMinutes?.let {
                     Text(
-                        text = "$it minuter",
+                        text = stringResource(R.string.minutes_format, it),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )

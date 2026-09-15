@@ -1,13 +1,12 @@
 package com.example.skafferiet.ui
 
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
-import com.example.skafferiet.SkafferietApplication
+import com.example.skafferiet.PantrySmartApplication
 import com.example.skafferiet.ui.navigation.Destination
 import com.example.skafferiet.ui.screens.detail.DetailScreen
 import com.example.skafferiet.ui.screens.detail.DetailViewModel
@@ -17,15 +16,15 @@ import com.example.skafferiet.ui.screens.shopping.ShoppingListScreen
 import com.example.skafferiet.ui.screens.shopping.ShoppingListViewModel
 import com.example.skafferiet.ui.screens.search.SearchScreen
 import com.example.skafferiet.ui.screens.search.SearchViewModel
-import com.example.skafferiet.ui.theme.SkafferietTheme
+import com.example.skafferiet.ui.theme.PantrySmartTheme
 
 @Composable
-fun SkafferiApp() {
+fun PantrySmartApp() {
     val backStack = rememberNavBackStack(Destination.Search)
     val context = LocalContext.current
-    val appContainer = (context.applicationContext as SkafferietApplication).container
+    val appContainer = (context.applicationContext as PantrySmartApplication).container
 
-    SkafferietTheme {
+    PantrySmartTheme {
         NavDisplay(
             backStack = backStack,
             entryProvider = { key ->

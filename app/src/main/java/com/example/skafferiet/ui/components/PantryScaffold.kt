@@ -11,7 +11,7 @@ import androidx.compose.ui.Modifier
 import com.example.skafferiet.ui.theme.spacing
 
 @Composable
-fun SkafferiScaffold(
+fun PantryScaffold(
     modifier: Modifier = Modifier,
     topBar: @Composable () -> Unit = {},
     bottomBar: @Composable () -> Unit = {},

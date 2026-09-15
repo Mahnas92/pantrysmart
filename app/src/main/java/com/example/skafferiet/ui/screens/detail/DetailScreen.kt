@@ -19,14 +19,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.example.skafferiet.R
 import com.example.skafferiet.domain.model.Ingredient
 import com.example.skafferiet.domain.model.Recipe
-import com.example.skafferiet.ui.components.SkafferiScaffold
-import com.example.skafferiet.ui.components.SkafferiTopBar
+import com.example.skafferiet.ui.components.PantryScaffold
+import com.example.skafferiet.ui.components.PantryTopBar
 import com.example.skafferiet.ui.theme.spacing
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -77,20 +78,24 @@ fun RecipeDetailContent(
     onNavigateToFavorites: () -> Unit,
     onNavigateToShoppingList: () -> Unit
 ) {
-    SkafferiScaffold(
+    PantryScaffold(
         topBar = {
-            SkafferiTopBar(
+            PantryTopBar(
                 title = recipe.title,
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back_button_cd))
                     }
                 },
                 actions = {
                     IconButton(onClick = onFavoriteToggle) {
                         Icon(
                             imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                            contentDescription = if (isFavorite) "Remove from favorites" else "Add to favorites",
+                            contentDescription = if (isFavorite) {
+                                stringResource(R.string.remove_from_favorites_cd)
+                            } else {
+                                stringResource(R.string.add_to_favorites_cd)
+                            },
                             tint = if (isFavorite) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
                         )
                     }
@@ -186,14 +191,14 @@ fun IngredientsList(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = "Ingredienser",
+            text = stringResource(R.string.ingredients_title),
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold
         )
         TextButton(onClick = onAddAll) {
             Icon(Icons.Default.Add, contentDescription = null)
             Spacer(modifier = Modifier.width(MaterialTheme.spacing.small))
-            Text("Lägg till alla")
+            Text(stringResource(R.string.add_all_ingredients))
         }
     }
     Spacer(modifier = Modifier.height(MaterialTheme.spacing.small))
@@ -203,7 +208,7 @@ fun IngredientsList(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "• ${ingredient.original}",
+                text = stringResource(R.string.ingredient_bullet_format, ingredient.original),
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier
                     .weight(1f)
@@ -215,7 +220,7 @@ fun IngredientsList(
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
-                    contentDescription = "Lägg till ${ingredient.name}",
+                    contentDescription = stringResource(R.string.add_ingredient_cd, ingredient.name),
                     modifier = Modifier.size(16.dp)
                 )
             }
@@ -226,13 +231,13 @@ fun IngredientsList(
 @Composable
 fun InstructionsSection(instructions: String?) {
     Text(
-        text = "Instruktioner",
+        text = stringResource(R.string.instructions_title),
         style = MaterialTheme.typography.titleLarge,
         fontWeight = FontWeight.Bold
     )
     Spacer(modifier = Modifier.height(MaterialTheme.spacing.small))
     Text(
-        text = instructions ?: "Inga instruktioner tillgängliga.",
+        text = instructions ?: stringResource(R.string.no_instructions_available),
         style = MaterialTheme.typography.bodyMedium
     )
 }

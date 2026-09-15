@@ -12,20 +12,20 @@ import com.example.skafferiet.data.local.entity.ShoppingListItemEntity
 
 @Database(entities = [RecipeEntity::class, ShoppingListItemEntity::class], version = 3, exportSchema = true)
 @TypeConverters(RecipeTypeConverters::class)
-abstract class SkafferiDatabase : RoomDatabase() {
+abstract class PantryDatabase : RoomDatabase() {
     abstract fun recipeDao(): RecipeDao
     abstract fun shoppingListDao(): ShoppingListDao
 
     companion object {
         @Volatile
-        private var Instance: SkafferiDatabase? = null
+        private var Instance: PantryDatabase? = null
 
-        fun getDatabase(context: Context): SkafferiDatabase {
+        fun getDatabase(context: Context): PantryDatabase {
             return Instance ?: synchronized(this) {
                 Room.databaseBuilder(
                     context,
-                    SkafferiDatabase::class.java,
-                    "skafferi_database"
+                    PantryDatabase::class.java,
+                    "pantry_database"
                 )
                     .fallbackToDestructiveMigration()
                     .build()

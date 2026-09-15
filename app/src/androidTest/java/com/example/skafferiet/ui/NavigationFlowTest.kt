@@ -22,11 +22,11 @@ class NavigationFlowTest {
         // Open the menu dropdown
         composeTestRule.onNodeWithContentDescription("Menu").performClick()
 
-        // Click "Favoriter" in the dropdown menu
-        composeTestRule.onNodeWithText("Favoriter").performClick()
+        // Click "Favorites" in the dropdown menu
+        composeTestRule.onNodeWithText("Favorites").performClick()
 
         // Assert that the favorites header is displayed
-        composeTestRule.onNodeWithText("Favoriter").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Favorites").assertIsDisplayed()
     }
 
     @Test
@@ -37,10 +37,10 @@ class NavigationFlowTest {
         // Open the menu dropdown
         composeTestRule.onNodeWithContentDescription("Menu").performClick()
 
-        // Click "Inköpslista" in the dropdown menu
-        composeTestRule.onNodeWithText("Inköpslista").performClick()
+        // Click "Shopping List" in the dropdown menu
+        composeTestRule.onNodeWithText("Shopping List").performClick()
 
         // Assert that the shopping list header is displayed
-        composeTestRule.onNodeWithText("Inköpslista").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Shopping List").assertIsDisplayed()
     }
 }

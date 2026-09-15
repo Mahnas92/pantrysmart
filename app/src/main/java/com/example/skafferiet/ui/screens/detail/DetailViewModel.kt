@@ -40,10 +40,10 @@ class DetailViewModel(
                 if (recipe != null) {
                     DetailUiState.Success(recipe, isFavorite)
                 } else {
-                    DetailUiState.Error("Receptet hittades inte.")
+                    DetailUiState.Error("Recipe not found.")
                 }
             }.catch { e ->
-                _uiState.value = DetailUiState.Error(e.message ?: "Ett oväntat fel uppstod.")
+                _uiState.value = DetailUiState.Error(e.message ?: "An unexpected error occurred.")
             }.collect { state ->
                 _uiState.value = state
             }

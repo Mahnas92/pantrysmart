@@ -8,11 +8,13 @@ import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
+import com.example.skafferiet.R
 
 @ExperimentalMaterial3Api
 @Composable
-fun SkafferiTopBar(
+fun PantryTopBar(
     title: String,
     modifier: Modifier = Modifier,
     navigationIcon: @Composable () -> Unit = {},
@@ -36,7 +38,7 @@ fun SkafferiTopBar(
             actions()
             if (onNavigateToFavorites != null || onNavigateToShoppingList != null) {
                 IconButton(onClick = { showMenu = true }) {
-                    Icon(Icons.Default.MoreVert, contentDescription = "Menu")
+                    Icon(Icons.Default.MoreVert, contentDescription = stringResource(R.string.menu_button_cd))
                 }
                 DropdownMenu(
                     expanded = showMenu,
@@ -44,7 +46,7 @@ fun SkafferiTopBar(
                 ) {
                     if (onNavigateToFavorites != null) {
                         DropdownMenuItem(
-                            text = { Text("Favoriter") },
+                            text = { Text(stringResource(R.string.favorites_title)) },
                             onClick = {
                                 showMenu = false
                                 onNavigateToFavorites()
@@ -54,7 +56,7 @@ fun SkafferiTopBar(
                     }
                     if (onNavigateToShoppingList != null) {
                         DropdownMenuItem(
-                            text = { Text("Inköpslista") },
+                            text = { Text(stringResource(R.string.shopping_list_title)) },
                             onClick = {
                                 showMenu = false
                                 onNavigateToShoppingList()

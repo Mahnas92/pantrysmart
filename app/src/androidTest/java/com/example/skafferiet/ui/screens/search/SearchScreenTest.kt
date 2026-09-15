@@ -5,7 +5,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import com.example.skafferiet.domain.model.Ingredient
 import com.example.skafferiet.domain.model.Recipe
 import com.example.skafferiet.domain.repository.RecipeRepository
-import com.example.skafferiet.ui.theme.SkafferietTheme
+import com.example.skafferiet.ui.theme.PantrySmartTheme
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import org.junit.Rule
@@ -50,7 +50,7 @@ class SearchScreenTest {
         val viewModel = SearchViewModel(fakeRepository)
 
         composeTestRule.setContent {
-            SkafferietTheme {
+            PantrySmartTheme {
                 SearchScreen(
                     viewModel = viewModel,
                     onRecipeClick = {},
@@ -64,14 +64,14 @@ class SearchScreenTest {
         composeTestRule.waitForIdle()
 
         // Enter search query
-        composeTestRule.onNodeWithText("Sök recept...").performTextInput("Test")
+        composeTestRule.onNodeWithText("Search recipes…").performTextInput("Test")
 
         // Wait for debounce and check if result is displayed
         composeTestRule.waitUntilAtLeastOneExists(
-            matcher = hasText("Test Recept"),
+            matcher = hasText("Test Recipe"),
             timeoutMillis = 5000
         )
 
-        composeTestRule.onNodeWithText("Test Recept").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Test Recipe").assertIsDisplayed()
     }
 }
