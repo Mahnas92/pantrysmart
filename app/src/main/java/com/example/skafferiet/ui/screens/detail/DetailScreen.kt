@@ -7,6 +7,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Warning
@@ -50,9 +51,11 @@ fun DetailScreen(
             RecipeDetailContent(
                 recipe = state.recipe,
                 isFavorite = state.isFavorite,
+                addedIngredients = state.addedIngredients,
                 onBackClick = onBackClick,
                 onFavoriteToggle = { viewModel.toggleFavorite() },
                 onAddIngredient = { viewModel.addIngredientToShoppingList(it) },
+                onRemoveIngredient = { viewModel.removeIngredientFromShoppingList(it) },
                 onAddAllIngredients = { viewModel.addAllIngredientsToShoppingList(it) },
                 onNavigateToFavorites = onNavigateToFavorites,
                 onNavigateToShoppingList = onNavigateToShoppingList
@@ -71,9 +74,11 @@ fun DetailScreen(
 fun RecipeDetailContent(
     recipe: Recipe,
     isFavorite: Boolean,
+    addedIngredients: Set<String>,
     onBackClick: () -> Unit,
     onFavoriteToggle: () -> Unit,
     onAddIngredient: (Ingredient) -> Unit,
+    onRemoveIngredient: (String) -> Unit,
     onAddAllIngredients: (List<Ingredient>) -> Unit,
     onNavigateToFavorites: () -> Unit,
     onNavigateToShoppingList: () -> Unit
@@ -127,7 +132,9 @@ fun RecipeDetailContent(
                         Spacer(modifier = Modifier.height(MaterialTheme.spacing.medium))
                         IngredientsList(
                             ingredients = recipe.ingredients,
-                            onAddIngredient = onAddIngredient
+                            addedIngredients = addedIngredients,
+                            onAddIngredient = onAddIngredient,
+                            onRemoveIngredient = onRemoveIngredient
                         ) { onAddAllIngredients(recipe.ingredients) }
                     }
                     Column(
@@ -149,7 +156,9 @@ fun RecipeDetailContent(
                     Spacer(modifier = Modifier.height(MaterialTheme.spacing.medium))
                     IngredientsList(
                         ingredients = recipe.ingredients,
-                        onAddIngredient = onAddIngredient
+                        addedIngredients = addedIngredients,
+                        onAddIngredient = onAddIngredient,
+                        onRemoveIngredient = onRemoveIngredient
                     ) { onAddAllIngredients(recipe.ingredients) }
                     Spacer(modifier = Modifier.height(MaterialTheme.spacing.large))
                     InstructionsSection(recipe.instructions)
@@ -182,7 +191,9 @@ fun RecipeImage(imageUrl: String?, title: String) {
 @Composable
 fun IngredientsList(
     ingredients: List<Ingredient>,
+    addedIngredients: Set<String>,
     onAddIngredient: (Ingredient) -> Unit,
+    onRemoveIngredient: (String) -> Unit,
     onAddAll: () -> Unit
 ) {
     Row(
@@ -203,6 +214,7 @@ fun IngredientsList(
     }
     Spacer(modifier = Modifier.height(MaterialTheme.spacing.small))
     ingredients.forEach { ingredient ->
+        val isAdded = addedIngredients.contains(ingredient.name)
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
@@ -215,13 +227,24 @@ fun IngredientsList(
                     .padding(vertical = 2.dp)
             )
             IconButton(
-                onClick = { onAddIngredient(ingredient) },
+                onClick = {
+                    if (isAdded) {
+                        onRemoveIngredient(ingredient.name)
+                    } else {
+                        onAddIngredient(ingredient)
+                    }
+                },
                 modifier = Modifier.size(24.dp)
             ) {
                 Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = stringResource(R.string.add_ingredient_cd, ingredient.name),
-                    modifier = Modifier.size(16.dp)
+                    imageVector = if (isAdded) Icons.Default.Check else Icons.Default.Add,
+                    contentDescription = if (isAdded) {
+                        stringResource(R.string.remove_ingredient_cd, ingredient.name)
+                    } else {
+                        stringResource(R.string.add_ingredient_cd, ingredient.name)
+                    },
+                    modifier = Modifier.size(16.dp),
+                    tint = if (isAdded) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
         }

@@ -11,7 +11,11 @@ import kotlinx.coroutines.launch
 
 sealed interface DetailUiState {
     data object Loading : DetailUiState
-    data class Success(val recipe: Recipe, val isFavorite: Boolean) : DetailUiState
+    data class Success(
+        val recipe: Recipe,
+        val isFavorite: Boolean,
+        val addedIngredients: Set<String>
+    ) : DetailUiState
     data class Error(val message: String) : DetailUiState
 }
 
@@ -23,9 +27,6 @@ class DetailViewModel(
     private val _uiState = MutableStateFlow<DetailUiState>(DetailUiState.Loading)
     val uiState: StateFlow<DetailUiState> = _uiState.asStateFlow()
 
-    val isFavorite: StateFlow<Boolean> = repository.isFavorite(recipeId)
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
-
     init {
         fetchRecipeDetails()
     }
@@ -35,10 +36,12 @@ class DetailViewModel(
             _uiState.value = DetailUiState.Loading
             combine(
                 repository.getRecipeDetails(recipeId),
-                repository.isFavorite(recipeId)
-            ) { recipe, isFavorite ->
+                repository.isFavorite(recipeId),
+                repository.getShoppingList()
+            ) { recipe, isFavorite, shoppingList ->
                 if (recipe != null) {
-                    DetailUiState.Success(recipe, isFavorite)
+                    val addedNames = shoppingList.map { it.name }.toSet()
+                    DetailUiState.Success(recipe, isFavorite, addedNames)
                 } else {
                     DetailUiState.Error("Recipe not found.")
                 }
@@ -62,6 +65,12 @@ class DetailViewModel(
     fun addIngredientToShoppingList(ingredient: Ingredient) {
         viewModelScope.launch {
             repository.addIngredientToList(ingredient)
+        }
+    }
+
+    fun removeIngredientFromShoppingList(ingredientName: String) {
+        viewModelScope.launch {
+            repository.deleteIngredientFromList(ingredientName)
         }
     }
 

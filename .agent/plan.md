@@ -51,31 +51,35 @@ A modern, offline-first Android application designed to manage recipes and shopp
 - **Duration:** 12m 14s
 
 ### Task_2_DataLayerIntegration: Implement the data layer including Spoonacular API integration with Retrofit, Room Database for local persistence, and an offline-first Repository.
-- **Status:** IN_PROGRESS
+- **Status:** COMPLETED
+- **Updates:** Verified implementation of Room DB, Retrofit service, and Offline-first repository. The project has been refactored to the name PantrySmart with English resources.
 - **Acceptance Criteria:**
   - Spoonacular API service is defined using Retrofit
   - API_KEY integration is functional and securely handled
   - Room entities, DAOs, and Database are implemented
   - Offline-first Repository logic correctly handles data fetching and caching
   - Unit tests for the repository and data sources are present
-- **StartTime:** 2026-09-09 00:03:58 CEST
 
-### Task_3_UIAndNavigation: Build the application UI screens (Search, Details, Shopping List) using Jetpack Compose, Navigation 3, and Adaptive layouts, integrated via MVVM/UDF.
+### Task_5_InteractiveFeedbackAndAdvancedCaching: Implement Phase 6 (Interactive Feedback & List Management) and Phase 5 (Advanced Caching & Navigation Logic).
+- **Status:** IN_PROGRESS
+- **Acceptance Criteria:**
+  - Ingredient button toggles state (checkmark/delete) based on shopping list presence
+  - Batch 'Add All' button functional with visual feedback
+  - Navigation back from details screen returns to Search screen
+  - Search screen auto-populates with cached recipes when query is blank (Omni Feed)
+  - Clickable Recent Search labels implemented under search bar
+  - TTL caching layer implemented to optimize API calls
+  - Granular git commits and full test coverage for all new logic
+  - The implemented UI must match the design provided in [Insert UI design image Path].
+- **StartTime:** 2026-09-15 10:21:25 CEST
+
+### Task_6_RefactorAndFinalVerification: Implement Phase 4 (Clean-up Refactoring) and perform final Run and Verify step.
 - **Status:** PENDING
 - **Acceptance Criteria:**
-  - Recipe Search screen is functional with search capabilities
-  - Recipe Details screen shows ingredients and instructions
-  - Shopping List screen manages items from recipes
-  - Jetpack Navigation 3 handles all screen transitions
-  - Adaptive UI layouts work across phone, foldable, and tablet form factors
-  - ViewModels correctly manage UI state using UDF
-
-### Task_4_TestingAndVerification: Implement the comprehensive testing suite and perform final verification of the application's stability and requirements.
-- **Status:** PENDING
-- **Acceptance Criteria:**
-  - Unit, UI, and Integration tests are implemented and passing
-  - Project builds successfully
-  - App does not crash during standard user flows
-  - Critic_agent verifies stability and alignment with user requirements
-  - UI matches the design specifications
+  - OfflineFirstRecipeRepository renamed to OfflineRecipeRepository
+  - All lint errors, deprecations, and warnings resolved across source and tests
+  - Build passes and app does not crash during standard user flows
+  - Existing tests pass
+  - Critic_agent verifies stability and requirement alignment
+  - The implemented UI must match the design provided in [Insert UI design image Path].
 
