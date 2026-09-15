@@ -164,4 +164,36 @@ class DetailScreenTest {
         // Verify repository call
         assert(fakeRepository.addAllIngredientsCalled)
     }
+
+    @Test
+    fun detailScreen_clickingAddAllIngredients_togglesButton() {
+        val fakeRepository = FakeRecipeRepository(testRecipe)
+        val viewModel = DetailViewModel(recipeId = 1L, repository = fakeRepository)
+
+        composeTestRule.setContent {
+            PantrySmartTheme {
+                DetailScreen(
+                    viewModel = viewModel,
+                    onBackClick = {},
+                    onNavigateToFavorites = {},
+                    onNavigateToShoppingList = {}
+                )
+            }
+        }
+
+        // Initially "Add All"
+        composeTestRule.onNodeWithText("Add All").assertIsDisplayed()
+
+        // Click Add All
+        composeTestRule.onNodeWithText("Add All").performClick()
+
+        // Now "Remove All"
+        composeTestRule.onNodeWithText("Remove All").assertIsDisplayed()
+
+        // Click Remove All
+        composeTestRule.onNodeWithText("Remove All").performClick()
+
+        // Back to "Add All"
+        composeTestRule.onNodeWithText("Add All").assertIsDisplayed()
+    }
 }

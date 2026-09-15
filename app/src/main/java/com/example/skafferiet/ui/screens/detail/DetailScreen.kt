@@ -7,9 +7,11 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.RemoveCircle
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -40,6 +42,7 @@ fun DetailScreen(
     onNavigateToShoppingList: () -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val isAllIngredientsAdded by viewModel.isAllIngredientsAdded.collectAsState()
 
     when (val state = uiState) {
         is DetailUiState.Loading -> {
@@ -52,11 +55,13 @@ fun DetailScreen(
                 recipe = state.recipe,
                 isFavorite = state.isFavorite,
                 addedIngredients = state.addedIngredients,
+                isAllIngredientsAdded = isAllIngredientsAdded,
                 onBackClick = onBackClick,
                 onFavoriteToggle = { viewModel.toggleFavorite() },
                 onAddIngredient = { viewModel.addIngredientToShoppingList(it) },
                 onRemoveIngredient = { viewModel.removeIngredientFromShoppingList(it) },
                 onAddAllIngredients = { viewModel.addAllIngredientsToShoppingList(it) },
+                onRemoveAllIngredients = { viewModel.removeAllIngredientsFromList() },
                 onNavigateToFavorites = onNavigateToFavorites,
                 onNavigateToShoppingList = onNavigateToShoppingList
             )
@@ -75,11 +80,13 @@ fun RecipeDetailContent(
     recipe: Recipe,
     isFavorite: Boolean,
     addedIngredients: Set<String>,
+    isAllIngredientsAdded: Boolean,
     onBackClick: () -> Unit,
     onFavoriteToggle: () -> Unit,
     onAddIngredient: (Ingredient) -> Unit,
     onRemoveIngredient: (String) -> Unit,
     onAddAllIngredients: (List<Ingredient>) -> Unit,
+    onRemoveAllIngredients: () -> Unit,
     onNavigateToFavorites: () -> Unit,
     onNavigateToShoppingList: () -> Unit
 ) {
@@ -133,9 +140,12 @@ fun RecipeDetailContent(
                         IngredientsList(
                             ingredients = recipe.ingredients,
                             addedIngredients = addedIngredients,
+                            isAllAdded = isAllIngredientsAdded,
                             onAddIngredient = onAddIngredient,
-                            onRemoveIngredient = onRemoveIngredient
-                        ) { onAddAllIngredients(recipe.ingredients) }
+                            onRemoveIngredient = onRemoveIngredient,
+                            onAddAll = { onAddAllIngredients(recipe.ingredients) },
+                            onRemoveAll = onRemoveAllIngredients
+                        )
                     }
                     Column(
                         modifier = Modifier
@@ -157,9 +167,12 @@ fun RecipeDetailContent(
                     IngredientsList(
                         ingredients = recipe.ingredients,
                         addedIngredients = addedIngredients,
+                        isAllAdded = isAllIngredientsAdded,
                         onAddIngredient = onAddIngredient,
-                        onRemoveIngredient = onRemoveIngredient
-                    ) { onAddAllIngredients(recipe.ingredients) }
+                        onRemoveIngredient = onRemoveIngredient,
+                        onAddAll = { onAddAllIngredients(recipe.ingredients) },
+                        onRemoveAll = onRemoveAllIngredients
+                    )
                     Spacer(modifier = Modifier.height(MaterialTheme.spacing.large))
                     InstructionsSection(recipe.instructions)
                 }
@@ -192,9 +205,11 @@ fun RecipeImage(imageUrl: String?, title: String) {
 fun IngredientsList(
     ingredients: List<Ingredient>,
     addedIngredients: Set<String>,
+    isAllAdded: Boolean,
     onAddIngredient: (Ingredient) -> Unit,
     onRemoveIngredient: (String) -> Unit,
-    onAddAll: () -> Unit
+    onAddAll: () -> Unit,
+    onRemoveAll: () -> Unit
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -206,10 +221,17 @@ fun IngredientsList(
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold
         )
-        TextButton(onClick = onAddAll) {
-            Icon(Icons.Default.Add, contentDescription = null)
+        TextButton(onClick = if (isAllAdded) onRemoveAll else onAddAll) {
+            Icon(
+                imageVector = if (isAllAdded) Icons.Default.RemoveCircle else Icons.Default.AddCircle,
+                contentDescription = null,
+                tint = if (isAllAdded) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
+            )
             Spacer(modifier = Modifier.width(MaterialTheme.spacing.small))
-            Text(stringResource(R.string.add_all_ingredients))
+            Text(
+                text = if (isAllAdded) stringResource(R.string.remove_all_ingredients) else stringResource(R.string.add_all_ingredients),
+                color = if (isAllAdded) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
+            )
         }
     }
     Spacer(modifier = Modifier.height(MaterialTheme.spacing.small))

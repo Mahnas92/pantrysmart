@@ -9,6 +9,7 @@
     <string name="remove_from_favorites_cd">Remove from favorites</string>
     <string name="ingredients_title">Ingredients</string>
     <string name="add_all_ingredients">Add All</string>
+    <string name="remove_all_ingredients">Remove All</string>
     <string name="add_ingredient_cd">Add %1$s</string>
     <string name="instructions_title">Instructions</string>
     <string name="no_instructions_available">No instructions available.</string>

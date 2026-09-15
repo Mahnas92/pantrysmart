@@ -27,6 +27,15 @@ class DetailViewModel(
     private val _uiState = MutableStateFlow<DetailUiState>(DetailUiState.Loading)
     val uiState: StateFlow<DetailUiState> = _uiState.asStateFlow()
 
+    val isAllIngredientsAdded: StateFlow<Boolean> = uiState.map { state ->
+        if (state is DetailUiState.Success) {
+            state.recipe.ingredients.isNotEmpty() &&
+                    state.recipe.ingredients.all { it.name in state.addedIngredients }
+        } else {
+            false
+        }
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
+
     init {
         fetchRecipeDetails()
     }
@@ -77,6 +86,17 @@ class DetailViewModel(
     fun addAllIngredientsToShoppingList(ingredients: List<Ingredient>) {
         viewModelScope.launch {
             repository.addIngredientsToList(ingredients)
+        }
+    }
+
+    fun removeAllIngredientsFromList() {
+        val state = _uiState.value
+        if (state is DetailUiState.Success) {
+            viewModelScope.launch {
+                state.recipe.ingredients.forEach { ingredient ->
+                    repository.deleteIngredientFromList(ingredient.name)
+                }
+            }
         }
     }
 
