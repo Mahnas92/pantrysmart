@@ -11,7 +11,7 @@
 ## Phase 5: Advanced Caching & Navigation Logic
 - [ ] Add `lastUpdated` timestamp to `RecipeEntity`
 - [ ] Implement TTL-based caching in `OfflineRecipeRepository`
-- [ ] Fix `DetailScreen` back button to always return to `SearchScreen`
+- [x] Fix `DetailScreen` back button to always return to `SearchScreen`
 - [ ] Update `SearchScreen` to show cached recipes when query is empty
 - [ ] Implement "Recent Search" clickable labels in `SearchScreen`
 

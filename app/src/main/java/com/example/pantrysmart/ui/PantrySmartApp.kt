@@ -36,6 +36,8 @@ fun PantrySmartApp() {
                         SearchScreen(
                             viewModel = viewModel,
                             onRecipeClick = { recipeId ->
+                                backStack.clear()
+                                backStack.add(Destination.Search)
                                 backStack.add(Destination.Detail(recipeId))
                             },
                             onNavigateToFavorites = { backStack.add(Destination.Favorites) },
@@ -64,6 +66,8 @@ fun PantrySmartApp() {
                         FavoritesScreen(
                             viewModel = viewModel,
                             onRecipeClick = { recipeId ->
+                                backStack.clear()
+                                backStack.add(Destination.Search)
                                 backStack.add(Destination.Detail(recipeId))
                             },
                             onBackClick = { backStack.remove(key) },
