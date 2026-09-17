@@ -7,11 +7,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.skafferiet"
+    namespace = "com.example.pantrysmart"
     compileSdk = 37
 
     defaultConfig {
-        applicationId = "com.example.skafferiet"
+        applicationId = "com.example.pantrysmart"
         minSdk = 26
         targetSdk = 37
         versionCode = 1

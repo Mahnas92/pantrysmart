@@ -22,6 +22,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Skafferi Recept"
+rootProject.name = "PantrySmart"
 include(":app")
  
