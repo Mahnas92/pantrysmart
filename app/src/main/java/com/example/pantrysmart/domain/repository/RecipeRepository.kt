@@ -14,6 +14,21 @@ interface RecipeRepository {
     fun getRecipes(query: String): Flow<List<Recipe>>
 
     /**
+     * Fetches all recipes from the local cache.
+     */
+    fun getAllRecipes(): Flow<List<Recipe>>
+
+    /**
+     * Fetches recent search terms.
+     */
+    fun getRecentSearches(): Flow<List<String>>
+
+    /**
+     * Adds a search term to the history.
+     */
+    suspend fun addSearchToHistory(query: String)
+
+    /**
      * Fetches details for a specific recipe by its ID.
      */
     fun getRecipeDetails(id: Long): Flow<Recipe?>

@@ -5,6 +5,7 @@ import com.example.pantrysmart.data.api.SpoonacularService
 import com.example.pantrysmart.data.api.model.RecipeDto
 import com.example.pantrysmart.data.api.model.SearchResponseDto
 import com.example.pantrysmart.data.local.dao.RecipeDao
+import com.example.pantrysmart.data.local.dao.SearchHistoryDao
 import com.example.pantrysmart.data.local.dao.ShoppingListDao
 import com.example.pantrysmart.data.local.entity.RecipeEntity
 import com.example.pantrysmart.data.local.entity.ShoppingListItemEntity
@@ -26,13 +27,15 @@ class OfflineFirstRecipeRepositoryTest {
     private val service: SpoonacularService = mockk()
     private val dao: RecipeDao = mockk()
     private val shoppingListDao: ShoppingListDao = mockk()
+    private val searchHistoryDao: SearchHistoryDao = mockk()
     private val apiKey = "test_api_key"
 
     @Before
     fun setup() {
         mockkStatic(Log::class)
         every { Log.e(any(), any(), any()) } returns 0
-        repository = OfflineFirstRecipeRepository(service, dao, shoppingListDao, apiKey)
+        coEvery { searchHistoryDao.insertAndTrim(any()) } just Runs
+        repository = OfflineFirstRecipeRepository(service, dao, shoppingListDao, searchHistoryDao, apiKey)
     }
 
     @After

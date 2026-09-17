@@ -3,6 +3,7 @@ package com.example.pantrysmart.data.repository
 import android.util.Log
 import com.example.pantrysmart.data.api.SpoonacularService
 import com.example.pantrysmart.data.local.dao.RecipeDao
+import com.example.pantrysmart.data.local.dao.SearchHistoryDao
 import com.example.pantrysmart.data.local.dao.ShoppingListDao
 import com.example.pantrysmart.data.local.entity.RecipeEntity
 import com.example.pantrysmart.data.mapper.toDomain
@@ -18,6 +19,7 @@ class OfflineFirstRecipeRepository(
     private val spoonacularService: SpoonacularService,
     private val recipeDao: RecipeDao,
     private val shoppingListDao: ShoppingListDao,
+    private val searchHistoryDao: SearchHistoryDao,
     private val apiKey: String,
 ) : RecipeRepository {
 
@@ -41,6 +43,20 @@ class OfflineFirstRecipeRepository(
 
         // Wait for the DB observation to complete (which happens when the flow is cancelled)
         dbJob.join()
+    }
+
+    override fun getAllRecipes(): Flow<List<Recipe>> {
+        return recipeDao.getAllRecipes()
+            .map { entities -> entities.map { it.toDomain() } }
+    }
+
+    override fun getRecentSearches(): Flow<List<String>> {
+        return searchHistoryDao.getRecentSearches()
+            .map { entities -> entities.map { it.query } }
+    }
+
+    override suspend fun addSearchToHistory(query: String) {
+        searchHistoryDao.insertAndTrim(query)
     }
 
     override fun getRecipeDetails(id: Long): Flow<Recipe?> = channelFlow {

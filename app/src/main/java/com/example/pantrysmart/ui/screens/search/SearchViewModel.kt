@@ -18,6 +18,8 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 class SearchViewModel(
@@ -27,12 +29,40 @@ class SearchViewModel(
     private val _searchQuery = MutableStateFlow("")
     val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
 
+    init {
+        viewModelScope.launch {
+            searchQuery
+                .debounce(1000L)
+                .distinctUntilChanged()
+                .collect { query ->
+                    if (query.isNotBlank()) {
+                        recipeRepository.addSearchToHistory(query)
+                    }
+                }
+        }
+    }
+
+    val recentSearches: StateFlow<List<String>> = recipeRepository.getRecentSearches()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = emptyList()
+        )
+
     val uiState: StateFlow<SearchUiState> = searchQuery
         .debounce(500L)
         .distinctUntilChanged()
         .flatMapLatest { query ->
             if (query.isBlank()) {
-                flowOf(SearchUiState.Empty)
+                recipeRepository.getAllRecipes()
+                    .map { recipes ->
+                        if (recipes.isEmpty()) {
+                            SearchUiState.Empty
+                        } else {
+                            SearchUiState.Success(recipes)
+                        }
+                    }
+                    .catch { emit(SearchUiState.Error(it.message ?: "Unknown error")) }
             } else {
                 recipeRepository.getRecipes(query)
                     .map { recipes ->

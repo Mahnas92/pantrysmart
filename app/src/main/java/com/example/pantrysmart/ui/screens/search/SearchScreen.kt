@@ -37,6 +37,7 @@ fun SearchScreen(
 ) {
     val searchQuery by viewModel.searchQuery.collectAsState()
     val uiState by viewModel.uiState.collectAsState()
+    val recentSearches by viewModel.recentSearches.collectAsState()
 
     PantryScaffold(
         topBar = {
@@ -58,12 +59,31 @@ fun SearchScreen(
                 onValueChange = viewModel::onQueryChange,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = MaterialTheme.spacing.medium),
+                    .padding(top = MaterialTheme.spacing.medium),
                 placeholder = { Text(stringResource(R.string.search_recipes_placeholder)) },
                 leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
                 singleLine = true,
                 shape = MaterialTheme.shapes.large
             )
+
+            if (recentSearches.isNotEmpty()) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = MaterialTheme.spacing.small),
+                    horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.small)
+                ) {
+                    recentSearches.take(3).forEach { term ->
+                        AssistChip(
+                            onClick = { viewModel.onQueryChange(term) },
+                            label = { Text(term) },
+                            shape = MaterialTheme.shapes.medium
+                        )
+                    }
+                }
+            } else {
+                Spacer(modifier = Modifier.height(MaterialTheme.spacing.medium))
+            }
 
             when (val state = uiState) {
                 is SearchUiState.Loading -> {
