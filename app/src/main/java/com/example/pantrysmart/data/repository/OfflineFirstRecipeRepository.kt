@@ -33,9 +33,20 @@ class OfflineFirstRecipeRepository(
 
         // Fetch from network and update database
         try {
-            val response = spoonacularService.searchRecipes(query, 20, apiKey)
-            val entities = response.results.map { it.toDomain().toEntity() }
-            upsertAll(entities)
+            val localRecipes = recipeDao.searchRecipes(query).first()
+            val isFresh = localRecipes.isNotEmpty() && localRecipes.all {
+                System.currentTimeMillis() - it.lastUpdated < TTL_MILLIS
+            }
+
+            if (!isFresh) {
+                val response = spoonacularService.searchRecipes(query, 20, apiKey)
+                val entities = response.results.map { it.toDomain().toEntity().copy(lastUpdated = System.currentTimeMillis()) }
+                upsertAll(entities)
+            }
+            // Save query to history
+            if (query.isNotBlank()) {
+                addSearchToHistory(query)
+            }
         } catch (e: Exception) {
             Log.e("RecipeRepository", "Error fetching recipes for query: $query", e)
             // Error handling: fallback is already handled by the DB observer
@@ -67,8 +78,14 @@ class OfflineFirstRecipeRepository(
         }
 
         try {
-            val dto = spoonacularService.getRecipeInformation(id.toInt(), apiKey)
-            upsertAll(listOf(dto.toDomain().toEntity()))
+            val localRecipe = recipeDao.getRecipeByIdOnce(id)
+            val isFresh = localRecipe != null && (System.currentTimeMillis() - localRecipe.lastUpdated < TTL_MILLIS)
+
+            if (!isFresh) {
+                val dto = spoonacularService.getRecipeInformation(id.toInt(), apiKey)
+                val entity = dto.toDomain().toEntity().copy(lastUpdated = System.currentTimeMillis())
+                upsertAll(listOf(entity))
+            }
         } catch (e: Exception) {
             Log.e("RecipeRepository", "Error fetching recipe details for id: $id", e)
             // Fallback to cache
@@ -134,5 +151,9 @@ class OfflineFirstRecipeRepository(
                 recipeDao.insert(entity)
             }
         }
+    }
+
+    companion object {
+        const val TTL_MILLIS = 60L * 24 * 60 * 60 * 1000
     }
 }

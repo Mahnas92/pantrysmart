@@ -16,5 +16,6 @@ data class RecipeEntity(
     val summary: String?,
     val instructions: String?,
     val ingredients: List<IngredientEntity>,
-    val isFavorite: Boolean = false
+    val isFavorite: Boolean = false,
+    val lastUpdated: Long = 0L
 )

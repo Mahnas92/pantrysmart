@@ -5,8 +5,8 @@ import com.example.pantrysmart.data.api.SpoonacularService
 import com.example.pantrysmart.data.api.model.RecipeDto
 import com.example.pantrysmart.data.api.model.SearchResponseDto
 import com.example.pantrysmart.data.local.dao.RecipeDao
-import com.example.pantrysmart.data.local.dao.SearchHistoryDao
 import com.example.pantrysmart.data.local.dao.ShoppingListDao
+import com.example.pantrysmart.data.local.dao.SearchHistoryDao
 import com.example.pantrysmart.data.local.entity.RecipeEntity
 import com.example.pantrysmart.data.local.entity.ShoppingListItemEntity
 import com.example.pantrysmart.domain.model.Ingredient
@@ -130,6 +130,92 @@ class OfflineFirstRecipeRepositoryTest {
 
         // Then
         coVerify { dao.insert(match { it.id == 1L && it.title == "New Title" && it.isFavorite }) }
+    }
+
+    @Test
+    fun `getRecipes skips network call if data is within TTL`() = runTest {
+        // Given
+        val query = "pasta"
+        val freshRecipe = RecipeEntity(
+            id = 1L,
+            title = "Fresh Pasta",
+            image = null,
+            readyInMinutes = 30,
+            servings = 4,
+            sourceUrl = null,
+            summary = null,
+            instructions = null,
+            ingredients = emptyList(),
+            lastUpdated = System.currentTimeMillis()
+        )
+        every { dao.searchRecipes(query) } returns flowOf(listOf(freshRecipe))
+
+        // When
+        repository.getRecipes(query).first()
+
+        // Then
+        coVerify(exactly = 0) { service.searchRecipes(any(), any(), any()) }
+    }
+
+    @Test
+    fun `getRecipeDetails skips network call if data is within TTL`() = runTest {
+        // Given
+        val id = 1L
+        val freshRecipe = RecipeEntity(
+            id = id,
+            title = "Fresh Pasta Details",
+            image = null,
+            readyInMinutes = 30,
+            servings = 4,
+            sourceUrl = null,
+            summary = null,
+            instructions = null,
+            ingredients = emptyList(),
+            lastUpdated = System.currentTimeMillis()
+        )
+        every { dao.getRecipeById(id) } returns flowOf(freshRecipe)
+        coEvery { dao.getRecipeByIdOnce(id) } returns freshRecipe
+
+        // When
+        repository.getRecipeDetails(id).first()
+
+        // Then
+        coVerify(exactly = 0) { service.getRecipeInformation(any(), any()) }
+    }
+
+    @Test
+    fun `getRecipes performs network call if data is outside TTL`() = runTest {
+        // Given
+        val query = "pasta"
+        val staleRecipe = RecipeEntity(
+            id = 1L,
+            title = "Stale Pasta",
+            image = null,
+            readyInMinutes = 30,
+            servings = 4,
+            sourceUrl = null,
+            summary = null,
+            instructions = null,
+            ingredients = emptyList(),
+            lastUpdated = System.currentTimeMillis() - (OfflineFirstRecipeRepository.TTL_MILLIS + 1000)
+        )
+        val recipeDto = RecipeDto(id = 1, title = "Fresh Pasta From Net")
+        val searchResponse = SearchResponseDto(
+            results = listOf(recipeDto),
+            offset = 0,
+            number = 1,
+            totalResults = 1
+        )
+        every { dao.searchRecipes(query) } returns flowOf(listOf(staleRecipe))
+        coEvery { service.searchRecipes(query, 20, apiKey) } returns searchResponse
+        coEvery { dao.getRecipeByIdOnce(1L) } returns staleRecipe
+        coEvery { dao.insert(any()) } just Runs
+
+        // When
+        repository.getRecipes(query).first()
+
+        // Then
+        coVerify(exactly = 1) { service.searchRecipes(query, 20, apiKey) }
     }
 
     @Test
