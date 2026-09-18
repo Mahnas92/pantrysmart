@@ -31,21 +31,25 @@ fun extractAdditionalInfo(original: String, amount: Double, unit: String, name: 
 }
 
 fun IngredientDto.toDomain(): Ingredient {
+    val fullImageUrl = if (image != null && !image.startsWith("http")) {
+        "https://spoonacular.com/cdn/ingredients_100x100/$image"
+    } else {
+        image
+    }
     return Ingredient(
         id = id,
         name = name,
         original = original,
         amount = amount,
         unit = unit,
-        image = image,
+        image = fullImageUrl,
         additionalInfo = extractAdditionalInfo(original, amount, unit, name)
     )
 }
 
 fun RecipeDto.toDomain(): Recipe {
-    // TODO: Fix Image Loading - investigate why some images from Spoonacular are not loading
     val fullImageUrl = if (image != null && !image.startsWith("http")) {
-        "https://spoonacular.com/recipeImages/$image"
+        "https://img.spoonacular.com/recipes/$image"
     } else {
         image
     }

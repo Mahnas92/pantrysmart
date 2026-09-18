@@ -2,7 +2,6 @@ package com.example.pantrysmart.data.mapper
 
 import com.example.pantrysmart.data.api.model.IngredientDto
 import com.example.pantrysmart.data.local.entity.IngredientEntity
-import com.example.pantrysmart.data.local.entity.RecipeEntity
 import com.example.pantrysmart.data.local.entity.ShoppingListItemEntity
 import com.example.pantrysmart.domain.model.Ingredient
 import com.example.pantrysmart.domain.model.Recipe
@@ -36,7 +35,7 @@ class MappersTest {
         assertEquals("1 red bell pepper", domain.original)
         assertEquals(1.0, domain.amount, 0.0)
         assertEquals("piece", domain.unit)
-        assertEquals("pepper.jpg", domain.image)
+        assertEquals("https://spoonacular.com/cdn/ingredients_100x100/pepper.jpg", domain.image)
         assertEquals("red", domain.additionalInfo)
     }
 

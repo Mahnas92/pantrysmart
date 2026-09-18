@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.*
+import kotlin.time.Duration.Companion.milliseconds
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -43,14 +44,25 @@ class SearchViewModelTest {
     fun `when query is empty, uiState should reflect all recipes`() = runTest {
         // Given
         val recipes = listOf(
-            Recipe(id = 1, title = "Recipe 1", image = "", readyInMinutes = 30, servings = 4, sourceUrl = "", summary = "", instructions = "", ingredients = emptyList(), isFavorite = false)
+            Recipe(
+                id = 1,
+                title = "Recipe 1",
+                image = "",
+                readyInMinutes = 30,
+                servings = 4,
+                sourceUrl = "",
+                summary = "",
+                instructions = "",
+                ingredients = emptyList(),
+                isFavorite = false,
+            )
         )
         every { repository.getAllRecipes() } returns flowOf(recipes)
         viewModel = SearchViewModel(repository)
 
         // When
         val job = launch { viewModel.uiState.collect {} }
-        advanceTimeBy(1000) // Advance time to bypass debounce
+        advanceTimeBy(1000.milliseconds) // Advance time to bypass debounce
 
         val state = viewModel.uiState.value
 
@@ -84,7 +96,7 @@ class SearchViewModelTest {
 
         // When
         viewModel.onQueryChange(query)
-        advanceTimeBy(1500) // Debounce for history is 1000ms
+        advanceTimeBy(1500.milliseconds) // Debounce for history is 1000ms
 
         // Then
         coVerify { repository.addSearchToHistory(query) }

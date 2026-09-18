@@ -45,10 +45,10 @@ class DetailViewModelTest {
             summary = "",
             instructions = "",
             ingredients = emptyList(),
-            isFavorite = false
+            isFavorite = false,
         )
         every { repository.getRecipeDetails(recipeId) } returns flowOf(testRecipe)
-        every { repository.isFavorite(recipeId) } returns flowOf(false)
+        every { repository.isFavorite(recipeId) } returns flowOf(value = false)
         every { repository.getShoppingList() } returns flowOf(emptyList())
 
         // When
