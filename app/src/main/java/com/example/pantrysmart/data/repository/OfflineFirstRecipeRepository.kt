@@ -79,7 +79,7 @@ class OfflineFirstRecipeRepository(
 
         try {
             val localRecipe = recipeDao.getRecipeByIdOnce(id)
-            val isFresh = localRecipe != null && (System.currentTimeMillis() - localRecipe.lastUpdated < TTL_MILLIS)
+            val isFresh = localRecipe != null && localRecipe.ingredients.isNotEmpty() && (System.currentTimeMillis() - localRecipe.lastUpdated < TTL_MILLIS)
 
             if (!isFresh) {
                 val dto = spoonacularService.getRecipeInformation(id.toInt(), apiKey)

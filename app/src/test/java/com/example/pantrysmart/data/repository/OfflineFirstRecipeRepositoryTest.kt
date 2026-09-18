@@ -7,6 +7,7 @@ import com.example.pantrysmart.data.api.model.SearchResponseDto
 import com.example.pantrysmart.data.local.dao.RecipeDao
 import com.example.pantrysmart.data.local.dao.ShoppingListDao
 import com.example.pantrysmart.data.local.dao.SearchHistoryDao
+import com.example.pantrysmart.data.local.entity.IngredientEntity
 import com.example.pantrysmart.data.local.entity.RecipeEntity
 import com.example.pantrysmart.data.local.entity.ShoppingListItemEntity
 import com.example.pantrysmart.domain.model.Ingredient
@@ -170,7 +171,7 @@ class OfflineFirstRecipeRepositoryTest {
             sourceUrl = null,
             summary = null,
             instructions = null,
-            ingredients = emptyList(),
+            ingredients = listOf(IngredientEntity(1, "Pasta", "Pasta", 1.0, "pkg", null, null)),
             lastUpdated = System.currentTimeMillis()
         )
         every { dao.getRecipeById(id) } returns flowOf(freshRecipe)
