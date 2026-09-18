@@ -71,7 +71,10 @@ fun PantrySmartApp() {
                                 backStack.add(Destination.Detail(recipeId))
                             },
                             onBackClick = { backStack.remove(key) },
-                            onNavigateToShoppingList = { backStack.add(Destination.ShoppingList) }
+                            onNavigateToShoppingList = {
+                                backStack.remove(key)
+                                backStack.add(Destination.ShoppingList)
+                            }
                         )
                     }
                     is Destination.ShoppingList -> NavEntry(key) {
@@ -81,7 +84,10 @@ fun PantrySmartApp() {
                         ShoppingListScreen(
                             viewModel = viewModel,
                             onBackClick = { backStack.remove(key) },
-                            onNavigateToFavorites = { backStack.add(Destination.Favorites) }
+                            onNavigateToFavorites = {
+                                backStack.remove(key)
+                                backStack.add(Destination.Favorites)
+                            }
                         )
                     }
                     else -> error("Unknown destination: $key")
