@@ -8,6 +8,28 @@ import com.example.pantrysmart.data.local.entity.ShoppingListItemEntity
 import com.example.pantrysmart.domain.model.Ingredient
 import com.example.pantrysmart.domain.model.Recipe
 
+fun extractAdditionalInfo(original: String, amount: Double, unit: String, name: String): String? {
+    var result = original
+    
+    val amtInt = amount.toInt()
+    val amtStrInt = amtInt.toString()
+    val amtStrDouble = amount.toString()
+    
+    if (unit.isNotBlank()) {
+        result = result.replace(unit, "", ignoreCase = true)
+    }
+    
+    result = result.replace(amtStrDouble, "", ignoreCase = true)
+    result = result.replace(amtStrInt, "", ignoreCase = true)
+    
+    if (name.isNotBlank()) {
+        result = result.replace(name, "", ignoreCase = true)
+    }
+    
+    val parts = result.split("\\s+".toRegex()).filter { it.isNotBlank() }
+    return if (parts.isEmpty()) null else parts.joinToString(", ")
+}
+
 fun IngredientDto.toDomain(): Ingredient {
     return Ingredient(
         id = id,
@@ -15,7 +37,8 @@ fun IngredientDto.toDomain(): Ingredient {
         original = original,
         amount = amount,
         unit = unit,
-        image = image
+        image = image,
+        additionalInfo = extractAdditionalInfo(original, amount, unit, name)
     )
 }
 
@@ -46,7 +69,8 @@ fun IngredientEntity.toDomain(): Ingredient {
         original = original,
         amount = amount,
         unit = unit,
-        image = image
+        image = image,
+        additionalInfo = additionalInfo
     )
 }
 
@@ -72,7 +96,8 @@ fun Ingredient.toEntity(): IngredientEntity {
         original = original,
         amount = amount,
         unit = unit,
-        image = image
+        image = image,
+        additionalInfo = additionalInfo
     )
 }
 
@@ -98,13 +123,15 @@ fun ShoppingListItemEntity.toDomain(): Ingredient {
         original = "$amount $unit $name",
         amount = amount,
         unit = unit,
-        image = null
+        image = null,
+        additionalInfo = if (additionalInfo.isBlank()) null else additionalInfo
     )
 }
 
 fun Ingredient.toShoppingListItemEntity(): ShoppingListItemEntity {
     return ShoppingListItemEntity(
         name = name,
+        additionalInfo = additionalInfo ?: "",
         amount = amount,
         unit = unit
     )

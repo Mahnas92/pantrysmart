@@ -59,7 +59,7 @@ fun DetailScreen(
                 onBackClick = onBackClick,
                 onFavoriteToggle = { viewModel.toggleFavorite() },
                 onAddIngredient = { viewModel.addIngredientToShoppingList(it) },
-                onRemoveIngredient = { viewModel.removeIngredientFromShoppingList(it) },
+                onRemoveIngredient = { name, info -> viewModel.removeIngredientFromShoppingList(name, info) },
                 onAddAllIngredients = { viewModel.addAllIngredientsToShoppingList(it) },
                 onRemoveAllIngredients = { viewModel.removeAllIngredientsFromList() },
                 onNavigateToFavorites = onNavigateToFavorites,
@@ -84,7 +84,7 @@ fun RecipeDetailContent(
     onBackClick: () -> Unit,
     onFavoriteToggle: () -> Unit,
     onAddIngredient: (Ingredient) -> Unit,
-    onRemoveIngredient: (String) -> Unit,
+    onRemoveIngredient: (String, String?) -> Unit,
     onAddAllIngredients: (List<Ingredient>) -> Unit,
     onRemoveAllIngredients: () -> Unit,
     onNavigateToFavorites: () -> Unit,
@@ -207,7 +207,7 @@ fun IngredientsList(
     addedIngredients: Set<String>,
     isAllAdded: Boolean,
     onAddIngredient: (Ingredient) -> Unit,
-    onRemoveIngredient: (String) -> Unit,
+    onRemoveIngredient: (String, String?) -> Unit,
     onAddAll: () -> Unit,
     onRemoveAll: () -> Unit
 ) {
@@ -241,8 +241,9 @@ fun IngredientsList(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
+            val displayName = if (!ingredient.additionalInfo.isNullOrBlank()) "${ingredient.name} (${ingredient.additionalInfo})" else ingredient.original
             Text(
-                text = stringResource(R.string.ingredient_bullet_format, ingredient.original),
+                text = stringResource(R.string.ingredient_bullet_format, displayName),
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier
                     .weight(1f)
@@ -251,7 +252,7 @@ fun IngredientsList(
             IconButton(
                 onClick = {
                     if (isAdded) {
-                        onRemoveIngredient(ingredient.name)
+                        onRemoveIngredient(ingredient.name, ingredient.additionalInfo)
                     } else {
                         onAddIngredient(ingredient)
                     }

@@ -77,9 +77,9 @@ class DetailViewModel(
         }
     }
 
-    fun removeIngredientFromShoppingList(ingredientName: String) {
+    fun removeIngredientFromShoppingList(ingredientName: String, additionalInfo: String? = null) {
         viewModelScope.launch {
-            repository.deleteIngredientFromList(ingredientName)
+            repository.deleteIngredientFromList(ingredientName, additionalInfo)
         }
     }
 
@@ -94,7 +94,7 @@ class DetailViewModel(
         if (state is DetailUiState.Success) {
             viewModelScope.launch {
                 state.recipe.ingredients.forEach { ingredient ->
-                    repository.deleteIngredientFromList(ingredient.name)
+                    repository.deleteIngredientFromList(ingredient.name, ingredient.additionalInfo)
                 }
             }
         }

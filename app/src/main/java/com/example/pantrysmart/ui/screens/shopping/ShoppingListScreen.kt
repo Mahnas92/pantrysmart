@@ -72,10 +72,11 @@ fun ShoppingListScreen(
                 )
             ) {
                 items(shoppingList) { ingredient ->
-                    val isChecked = checkedItems[ingredient.name] ?: false
+                    val itemKey = if (!ingredient.additionalInfo.isNullOrBlank()) "${ingredient.name}_${ingredient.additionalInfo}" else ingredient.name
+                    val isChecked = checkedItems[itemKey] ?: false
                     
                     Surface(
-                        onClick = { checkedItems[ingredient.name] = !isChecked },
+                        onClick = { checkedItems[itemKey] = !isChecked },
                         shape = MaterialTheme.shapes.medium,
                         color = if (isChecked) MaterialTheme.colorScheme.surfaceVariant else MaterialTheme.colorScheme.surface,
                         tonalElevation = 1.dp
@@ -88,12 +89,13 @@ fun ShoppingListScreen(
                         ) {
                             Checkbox(
                                 checked = isChecked,
-                                onCheckedChange = { checkedItems[ingredient.name] = it }
+                                onCheckedChange = { checkedItems[itemKey] = it }
                             )
                             Spacer(modifier = Modifier.width(MaterialTheme.spacing.small))
                             Column(modifier = Modifier.weight(1f)) {
+                                val displayName = if (!ingredient.additionalInfo.isNullOrBlank()) "${ingredient.name} (${ingredient.additionalInfo})" else ingredient.name
                                 Text(
-                                    text = ingredient.name,
+                                    text = displayName,
                                     style = MaterialTheme.typography.bodyLarge,
                                     textDecoration = if (isChecked) TextDecoration.LineThrough else null
                                 )
@@ -107,7 +109,7 @@ fun ShoppingListScreen(
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                             }
-                            IconButton(onClick = { viewModel.deleteIngredient(ingredient.name) }) {
+                            IconButton(onClick = { viewModel.deleteIngredient(ingredient.name, ingredient.additionalInfo) }) {
                                 Icon(
                                     imageVector = Icons.Default.Delete,
                                     contentDescription = stringResource(R.string.remove_ingredient_cd, ingredient.name),

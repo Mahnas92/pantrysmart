@@ -12,6 +12,7 @@ import kotlinx.coroutines.launch
 
 data class AggregatedIngredient(
     val name: String,
+    val additionalInfo: String? = null,
     val amount: Double,
     val unit: String,
     val isChecked: Boolean = false
@@ -24,12 +25,14 @@ class ShoppingListViewModel(
     val shoppingList: StateFlow<List<AggregatedIngredient>> = repository.getShoppingList()
         .map { ingredients ->
             ingredients
-                .groupBy { it.name.lowercase().trim() }
-                .map { (name, ingredients) ->
+                .groupBy { Pair(it.name.lowercase().trim(), it.additionalInfo?.lowercase()?.trim()) }
+                .map { (key, list) ->
+                    val firstIng = list.first()
                     AggregatedIngredient(
-                        name = name.replaceFirstChar { it.uppercase() },
-                        amount = ingredients.sumOf { it.amount },
-                        unit = ingredients.firstOrNull()?.unit ?: ""
+                        name = firstIng.name.replaceFirstChar { it.uppercase() },
+                        additionalInfo = firstIng.additionalInfo,
+                        amount = list.sumOf { it.amount },
+                        unit = firstIng.unit
                     )
                 }
                 .sortedBy { it.name }
@@ -40,9 +43,9 @@ class ShoppingListViewModel(
             initialValue = emptyList()
         )
 
-    fun deleteIngredient(name: String) {
+    fun deleteIngredient(name: String, additionalInfo: String? = null) {
         viewModelScope.launch {
-            repository.deleteIngredientFromList(name)
+            repository.deleteIngredientFromList(name, additionalInfo)
         }
     }
 

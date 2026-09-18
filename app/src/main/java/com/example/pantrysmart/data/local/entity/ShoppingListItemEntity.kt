@@ -1,11 +1,11 @@
 package com.example.pantrysmart.data.local.entity
 
 import androidx.room.Entity
-import androidx.room.PrimaryKey
 
-@Entity(tableName = "shopping_list_items")
+@Entity(tableName = "shopping_list_items", primaryKeys = ["name", "additionalInfo"])
 data class ShoppingListItemEntity(
-    @PrimaryKey val name: String,
+    val name: String,
+    val additionalInfo: String,
     val amount: Double,
     val unit: String
 )

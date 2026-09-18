@@ -34,6 +34,9 @@ class SearchScreenTest {
         override fun getRecipes(query: String): Flow<List<Recipe>> {
             return if (query == "Test") flowOf(fakeRecipes) else flowOf(emptyList())
         }
+        override fun getAllRecipes(): Flow<List<Recipe>> = flowOf(emptyList())
+        override fun getRecentSearches(): Flow<List<String>> = flowOf(emptyList())
+        override suspend fun addSearchToHistory(query: String) {}
         override fun getRecipeDetails(id: Long): Flow<Recipe?> = flowOf(null)
         override suspend fun toggleFavorite(recipe: Recipe) {}
         override fun isFavorite(id: Long): Flow<Boolean> = flowOf(false)
@@ -41,7 +44,7 @@ class SearchScreenTest {
         override fun getShoppingList(): Flow<List<Ingredient>> = flowOf(emptyList())
         override suspend fun addIngredientsToList(ingredients: List<Ingredient>) {}
         override suspend fun addIngredientToList(ingredient: Ingredient) {}
-        override suspend fun deleteIngredientFromList(name: String) {}
+        override suspend fun deleteIngredientFromList(name: String, additionalInfo: String?) {}
     }
 
     @OptIn(ExperimentalTestApi::class)

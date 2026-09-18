@@ -21,6 +21,12 @@ interface ShoppingListDao {
     @Query("DELETE FROM shopping_list_items WHERE name = :name")
     suspend fun deleteItemByName(name: String)
 
+    @Query("DELETE FROM shopping_list_items WHERE name = :name AND additionalInfo = :additionalInfo")
+    suspend fun deleteItemByNameAndAdditionalInfo(name: String, additionalInfo: String)
+
     @Query("SELECT * FROM shopping_list_items WHERE name = :name")
     suspend fun getItemByName(name: String): ShoppingListItemEntity?
+
+    @Query("SELECT * FROM shopping_list_items WHERE name = :name AND additionalInfo = :additionalInfo")
+    suspend fun getItemByNameAndAdditionalInfo(name: String, additionalInfo: String): ShoppingListItemEntity?
 }

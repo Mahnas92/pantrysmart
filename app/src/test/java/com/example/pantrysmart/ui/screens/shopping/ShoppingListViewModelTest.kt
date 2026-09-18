@@ -62,8 +62,8 @@ class ShoppingListViewModelTest {
     fun shoppingList_distinguishesBetweenDifferentTypesOfSameIngredient() = runTest {
         // Given
         val ingredients = listOf(
-            Ingredient(id = 1, name = "Bell pepper", original = "1 red bell pepper", amount = 1.0, unit = "piece", image = ""),
-            Ingredient(id = 2, name = "Bell pepper", original = "1 green bell pepper", amount = 1.0, unit = "piece", image = "")
+            Ingredient(id = 1, name = "Bell pepper", original = "1 red bell pepper", amount = 1.0, unit = "piece", image = "", additionalInfo = "red"),
+            Ingredient(id = 2, name = "Bell pepper", original = "1 green bell pepper", amount = 1.0, unit = "piece", image = "", additionalInfo = "green")
         )
 
         every { repository.getShoppingList() } returns flowOf(ingredients)
@@ -73,7 +73,6 @@ class ShoppingListViewModelTest {
         val result = viewModel.shoppingList.first()
 
         // Then
-        // Current logic groups by name, so this is expected to fail (size will be 1)
         assertEquals("Should have two distinct entries for different colored peppers", 2, result.size)
     }
 

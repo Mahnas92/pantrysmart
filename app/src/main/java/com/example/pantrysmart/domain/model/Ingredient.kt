@@ -6,5 +6,6 @@ data class Ingredient(
     val original: String,
     val amount: Double,
     val unit: String,
-    val image: String?
+    val image: String?,
+    val additionalInfo: String? = null
 )

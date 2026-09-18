@@ -221,7 +221,7 @@ class OfflineFirstRecipeRepositoryTest {
     @Test
     fun `getShoppingList returns mapped ingredients from DAO`() = runTest {
         // Given
-        val entity = ShoppingListItemEntity("Sugar", 2.0, "cups")
+        val entity = ShoppingListItemEntity("Sugar", "", 2.0, "cups")
         every { shoppingListDao.getAllItems() } returns flowOf(listOf(entity))
 
         // When
@@ -238,8 +238,8 @@ class OfflineFirstRecipeRepositoryTest {
     fun `addIngredientToList updates amount if item already exists`() = runTest {
         // Given
         val ingredient = Ingredient(null, "Sugar", "2 cups Sugar", 2.0, "cups", null)
-        val existing = ShoppingListItemEntity("Sugar", 1.0, "cups")
-        coEvery { shoppingListDao.getItemByName("Sugar") } returns existing
+        val existing = ShoppingListItemEntity("Sugar", "", 1.0, "cups")
+        coEvery { shoppingListDao.getItemByNameAndAdditionalInfo("Sugar", "") } returns existing
         coEvery { shoppingListDao.insertItem(any()) } just Runs
 
         // When
@@ -253,7 +253,7 @@ class OfflineFirstRecipeRepositoryTest {
     fun `addIngredientToList inserts new item if it doesn't exist`() = runTest {
         // Given
         val ingredient = Ingredient(null, "Sugar", "2 cups Sugar", 2.0, "cups", null)
-        coEvery { shoppingListDao.getItemByName("Sugar") } returns null
+        coEvery { shoppingListDao.getItemByNameAndAdditionalInfo("Sugar", "") } returns null
         coEvery { shoppingListDao.insertItem(any()) } just Runs
 
         // When

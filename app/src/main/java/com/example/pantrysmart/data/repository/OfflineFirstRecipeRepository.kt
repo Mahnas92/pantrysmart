@@ -117,7 +117,8 @@ class OfflineFirstRecipeRepository(
     }
 
     override suspend fun addIngredientToList(ingredient: Ingredient) {
-        val existing = shoppingListDao.getItemByName(ingredient.name)
+        val addInfo = ingredient.additionalInfo ?: ""
+        val existing = shoppingListDao.getItemByNameAndAdditionalInfo(ingredient.name, addInfo)
         if (existing != null) {
             val updated = existing.copy(
                 amount = existing.amount + ingredient.amount
@@ -128,8 +129,12 @@ class OfflineFirstRecipeRepository(
         }
     }
 
-    override suspend fun deleteIngredientFromList(name: String) {
-        shoppingListDao.deleteItemByName(name)
+    override suspend fun deleteIngredientFromList(name: String, additionalInfo: String?) {
+        if (additionalInfo != null) {
+            shoppingListDao.deleteItemByNameAndAdditionalInfo(name, additionalInfo)
+        } else {
+            shoppingListDao.deleteItemByName(name)
+        }
     }
 
     private suspend fun upsertAll(entities: List<RecipeEntity>) {

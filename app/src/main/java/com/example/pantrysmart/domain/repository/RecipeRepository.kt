@@ -66,5 +66,5 @@ interface RecipeRepository {
     /**
      * Deletes an ingredient from the shopping list by name.
      */
-    suspend fun deleteIngredientFromList(name: String)
+    suspend fun deleteIngredientFromList(name: String, additionalInfo: String? = null)
 }

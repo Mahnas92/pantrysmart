@@ -39,6 +39,9 @@ class DetailScreenTest {
         private val _shoppingList = MutableStateFlow<List<Ingredient>>(emptyList())
 
         override fun getRecipes(query: String): Flow<List<Recipe>> = flowOf(emptyList())
+        override fun getAllRecipes(): Flow<List<Recipe>> = flowOf(emptyList())
+        override fun getRecentSearches(): Flow<List<String>> = flowOf(emptyList())
+        override suspend fun addSearchToHistory(query: String) {}
         override fun getRecipeDetails(id: Long): Flow<Recipe?> = flowOf(recipe)
         override suspend fun toggleFavorite(recipe: Recipe) {}
         override fun isFavorite(id: Long): Flow<Boolean> = flowOf(false)
@@ -53,7 +56,7 @@ class DetailScreenTest {
             addIngredientCalled = true
             _shoppingList.value = _shoppingList.value + ingredient
         }
-        override suspend fun deleteIngredientFromList(name: String) {
+        override suspend fun deleteIngredientFromList(name: String, additionalInfo: String?) {
             deleteIngredientCalled = true
             _shoppingList.value = _shoppingList.value.filter { it.name != name }
         }
