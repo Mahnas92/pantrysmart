@@ -24,7 +24,7 @@ fun FavoritesScreen(
     viewModel: FavoritesViewModel,
     onRecipeClick: (Long) -> Unit,
     onBackClick: () -> Unit,
-    onNavigateToShoppingList: () -> Unit
+    onNavigateToShoppingList: () -> Unit,
 ) {
     val favorites by viewModel.favorites.collectAsState()
 

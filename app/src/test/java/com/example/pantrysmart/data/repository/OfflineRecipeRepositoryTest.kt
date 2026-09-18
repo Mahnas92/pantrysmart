@@ -22,9 +22,9 @@ import org.junit.Before
 import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class OfflineFirstRecipeRepositoryTest {
+class OfflineRecipeRepositoryTest {
 
-    private lateinit var repository: OfflineFirstRecipeRepository
+    private lateinit var repository: OfflineRecipeRepository
     private val service: SpoonacularService = mockk()
     private val dao: RecipeDao = mockk()
     private val shoppingListDao: ShoppingListDao = mockk()
@@ -36,7 +36,7 @@ class OfflineFirstRecipeRepositoryTest {
         mockkStatic(Log::class)
         every { Log.e(any(), any(), any()) } returns 0
         coEvery { searchHistoryDao.insertAndTrim(any()) } just Runs
-        repository = OfflineFirstRecipeRepository(service, dao, shoppingListDao, searchHistoryDao, apiKey)
+        repository = OfflineRecipeRepository(service, dao, shoppingListDao, searchHistoryDao, apiKey)
     }
 
     @After
@@ -198,7 +198,7 @@ class OfflineFirstRecipeRepositoryTest {
             summary = null,
             instructions = null,
             ingredients = emptyList(),
-            lastUpdated = System.currentTimeMillis() - (OfflineFirstRecipeRepository.TTL_MILLIS + 1000)
+            lastUpdated = System.currentTimeMillis() - (OfflineRecipeRepository.TTL_MILLIS + 1000)
         )
         val recipeDto = RecipeDto(id = 1, title = "Fresh Pasta From Net")
         val searchResponse = SearchResponseDto(

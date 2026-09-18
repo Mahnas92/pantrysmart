@@ -15,7 +15,7 @@ import com.example.pantrysmart.domain.repository.RecipeRepository
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
-class OfflineFirstRecipeRepository(
+class OfflineRecipeRepository(
     private val spoonacularService: SpoonacularService,
     private val recipeDao: RecipeDao,
     private val shoppingListDao: ShoppingListDao,

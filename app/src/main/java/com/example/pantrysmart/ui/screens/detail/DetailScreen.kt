@@ -63,7 +63,7 @@ fun DetailScreen(
                 onAddAllIngredients = { viewModel.addAllIngredientsToShoppingList(it) },
                 onRemoveAllIngredients = { viewModel.removeAllIngredientsFromList() },
                 onNavigateToFavorites = onNavigateToFavorites,
-                onNavigateToShoppingList = onNavigateToShoppingList
+                onNavigateToShoppingList = onNavigateToShoppingList,
             )
         }
         is DetailUiState.Error -> {
@@ -113,7 +113,7 @@ fun RecipeDetailContent(
                     }
                 },
                 onNavigateToFavorites = onNavigateToFavorites,
-                onNavigateToShoppingList = onNavigateToShoppingList
+                onNavigateToShoppingList = onNavigateToShoppingList,
             )
         }
     ) { _ ->

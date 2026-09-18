@@ -17,13 +17,13 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 class SearchViewModel(
-    private val recipeRepository: RecipeRepository
+    private val recipeRepository: RecipeRepository,
 ) : ViewModel() {
 
     private val _searchQuery = MutableStateFlow("")
@@ -32,7 +32,7 @@ class SearchViewModel(
     init {
         viewModelScope.launch {
             searchQuery
-                .debounce(1000L)
+                .debounce(1000.milliseconds)
                 .distinctUntilChanged()
                 .collect { query ->
                     if (query.isNotBlank()) {
@@ -50,7 +50,7 @@ class SearchViewModel(
         )
 
     val uiState: StateFlow<SearchUiState> = searchQuery
-        .debounce(500L)
+        .debounce(500.milliseconds)
         .distinctUntilChanged()
         .flatMapLatest { query ->
             if (query.isBlank()) {

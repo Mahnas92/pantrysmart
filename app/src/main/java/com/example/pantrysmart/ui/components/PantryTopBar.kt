@@ -21,9 +21,9 @@ fun PantryTopBar(
     actions: @Composable RowScope.() -> Unit = {},
     scrollBehavior: TopAppBarScrollBehavior? = null,
     onNavigateToFavorites: (() -> Unit)? = null,
-    onNavigateToShoppingList: (() -> Unit)? = null
+    onNavigateToShoppingList: (() -> Unit)? = null,
 ) {
-    var showMenu by remember { mutableStateOf(false) }
+    var showMenu by remember { mutableStateOf(value = false) }
 
     CenterAlignedTopAppBar(
         title = {
@@ -36,7 +36,7 @@ fun PantryTopBar(
         navigationIcon = navigationIcon,
         actions = {
             actions()
-            if (onNavigateToFavorites != null || onNavigateToShoppingList != null) {
+            if ((onNavigateToFavorites != null) || (onNavigateToShoppingList != null)) {
                 IconButton(onClick = { showMenu = true }) {
                     Icon(Icons.Default.MoreVert, contentDescription = stringResource(R.string.menu_button_cd))
                 }

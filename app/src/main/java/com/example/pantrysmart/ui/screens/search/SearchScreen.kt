@@ -33,7 +33,7 @@ fun SearchScreen(
     viewModel: SearchViewModel,
     onRecipeClick: (Long) -> Unit,
     onNavigateToFavorites: () -> Unit,
-    onNavigateToShoppingList: () -> Unit
+    onNavigateToShoppingList: () -> Unit,
 ) {
     val searchQuery by viewModel.searchQuery.collectAsState()
     val uiState by viewModel.uiState.collectAsState()

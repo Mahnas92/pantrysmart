@@ -25,7 +25,7 @@ import java.util.*
 fun ShoppingListScreen(
     viewModel: ShoppingListViewModel,
     onBackClick: () -> Unit,
-    onNavigateToFavorites: () -> Unit
+    onNavigateToFavorites: () -> Unit,
 ) {
     val shoppingList by viewModel.shoppingList.collectAsState()
     

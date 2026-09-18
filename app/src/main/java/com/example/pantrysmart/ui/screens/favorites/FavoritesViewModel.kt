@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 
 class FavoritesViewModel(
-    private val repository: RecipeRepository
+    repository: RecipeRepository,
 ) : ViewModel() {
 
     val favorites: StateFlow<List<Recipe>> = repository.getFavorites()

@@ -14,14 +14,14 @@ sealed interface DetailUiState {
     data class Success(
         val recipe: Recipe,
         val isFavorite: Boolean,
-        val addedIngredients: Set<String>
+        val addedIngredients: Set<String>,
     ) : DetailUiState
     data class Error(val message: String) : DetailUiState
 }
 
 class DetailViewModel(
     private val recipeId: Long,
-    private val repository: RecipeRepository
+    private val repository: RecipeRepository,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<DetailUiState>(DetailUiState.Loading)
@@ -34,7 +34,11 @@ class DetailViewModel(
         } else {
             false
         }
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = false,
+    )
 
     init {
         fetchRecipeDetails()
@@ -49,7 +53,7 @@ class DetailViewModel(
                 repository.getShoppingList()
             ) { recipe, isFavorite, shoppingList ->
                 if (recipe != null) {
-                    val addedNames = shoppingList.map { it.name }.toSet()
+                    val addedNames = shoppingList.asSequence().map { it.name }.toSet()
                     DetailUiState.Success(recipe, isFavorite, addedNames)
                 } else {
                     DetailUiState.Error("Recipe not found.")

@@ -19,12 +19,13 @@ data class AggregatedIngredient(
 )
 
 class ShoppingListViewModel(
-    private val repository: RecipeRepository
+    private val repository: RecipeRepository,
 ) : ViewModel() {
 
     val shoppingList: StateFlow<List<AggregatedIngredient>> = repository.getShoppingList()
         .map { ingredients ->
             ingredients
+                .asSequence()
                 .groupBy { Pair(it.name.lowercase().trim(), it.additionalInfo?.lowercase()?.trim()) }
                 .map { (key, list) ->
                     val firstIng = list.first()
@@ -36,6 +37,7 @@ class ShoppingListViewModel(
                     )
                 }
                 .sortedBy { it.name }
+                .toList()
         }
         .stateIn(
             scope = viewModelScope,

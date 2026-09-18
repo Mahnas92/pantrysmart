@@ -4,7 +4,7 @@ import android.content.Context
 import com.example.pantrysmart.BuildConfig
 import com.example.pantrysmart.data.api.RetrofitClient
 import com.example.pantrysmart.data.local.PantryDatabase
-import com.example.pantrysmart.data.repository.OfflineFirstRecipeRepository
+import com.example.pantrysmart.data.repository.OfflineRecipeRepository
 import com.example.pantrysmart.domain.repository.RecipeRepository
 
 /**
@@ -24,7 +24,7 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
     }
 
     override val recipeRepository: RecipeRepository by lazy {
-        OfflineFirstRecipeRepository(
+        OfflineRecipeRepository(
             spoonacularService = RetrofitClient.spoonacularService,
             recipeDao = database.recipeDao(),
             shoppingListDao = database.shoppingListDao(),
