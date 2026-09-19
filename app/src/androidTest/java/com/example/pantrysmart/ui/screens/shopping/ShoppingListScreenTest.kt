@@ -17,8 +17,22 @@ class ShoppingListScreenTest {
     val composeTestRule = createComposeRule()
 
     private val testIngredients = listOf(
-        Ingredient(id = 1, name = "Tomato", original = "2 Tomatoes", amount = 2.0, unit = "pcs", image = null),
-        Ingredient(id = 2, name = "Onion", original = "1 Onion", amount = 1.0, unit = "pcs", image = null)
+        Ingredient(
+            id = 1,
+            name = "Tomato",
+            original = "2 Tomatoes",
+            amount = 2.0,
+            unit = "pcs",
+            image = null,
+        ),
+        Ingredient(
+            id = 2,
+            name = "Onion",
+            original = "1 Onion",
+            amount = 1.0,
+            unit = "pcs",
+            image = null,
+        ),
     )
 
     private class FakeRecipeRepository(val ingredients: List<Ingredient>) : RecipeRepository {

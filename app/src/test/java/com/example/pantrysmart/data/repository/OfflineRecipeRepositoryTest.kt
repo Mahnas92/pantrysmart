@@ -53,7 +53,7 @@ class OfflineRecipeRepositoryTest {
             results = listOf(recipeDto),
             offset = 0,
             number = 1,
-            totalResults = 1
+            totalResults = 1,
         )
         
         coEvery { service.searchRecipes(query, 20, apiKey) } returns searchResponse
@@ -82,7 +82,7 @@ class OfflineRecipeRepositoryTest {
             sourceUrl = null,
             summary = null,
             instructions = null,
-            ingredients = emptyList()
+            ingredients = emptyList(),
         )
         
         coEvery { service.searchRecipes(query, 20, apiKey) } throws Exception("Network error")
@@ -106,7 +106,7 @@ class OfflineRecipeRepositoryTest {
             results = listOf(recipeDto),
             offset = 0,
             number = 1,
-            totalResults = 1
+            totalResults = 1,
         )
         val existingRecipe = RecipeEntity(
             id = 1L,
@@ -118,7 +118,7 @@ class OfflineRecipeRepositoryTest {
             summary = null,
             instructions = null,
             ingredients = emptyList(),
-            isFavorite = true
+            isFavorite = true,
         )
         
         coEvery { service.searchRecipes(query, 20, apiKey) } returns searchResponse
@@ -172,7 +172,7 @@ class OfflineRecipeRepositoryTest {
             summary = null,
             instructions = null,
             ingredients = listOf(IngredientEntity(1, "Pasta", "Pasta", 1.0, "pkg", null, null)),
-            lastUpdated = System.currentTimeMillis()
+            lastUpdated = System.currentTimeMillis(),
         )
         every { dao.getRecipeById(id) } returns flowOf(freshRecipe)
         coEvery { dao.getRecipeByIdOnce(id) } returns freshRecipe
@@ -205,7 +205,7 @@ class OfflineRecipeRepositoryTest {
             results = listOf(recipeDto),
             offset = 0,
             number = 1,
-            totalResults = 1
+            totalResults = 1,
         )
         every { dao.searchRecipes(query) } returns flowOf(listOf(staleRecipe))
         coEvery { service.searchRecipes(query, 20, apiKey) } returns searchResponse

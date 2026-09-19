@@ -7,7 +7,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.rounded.Restaurant
+import androidx.compose.material.icons.rounded.BrokenImage
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -150,7 +150,7 @@ fun RecipeCard(
                     .fillMaxHeight(),
                 contentScale = ContentScale.Crop,
                 placeholder = painterResource(R.drawable.placeholder),
-                error = rememberVectorPainter(Icons.Rounded.Restaurant)
+                error = rememberVectorPainter(Icons.Rounded.BrokenImage)
             )
             Column(
                 modifier = Modifier

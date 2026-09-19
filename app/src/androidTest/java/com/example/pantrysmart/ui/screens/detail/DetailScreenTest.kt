@@ -25,10 +25,17 @@ class DetailScreenTest {
         servings = 4,
         sourceUrl = null,
         ingredients = listOf(
-            Ingredient(id = 1, name = "Tomato", original = "2 Tomatoes", amount = 2.0, unit = "pcs", image = null)
+            Ingredient(
+                id = 1,
+                name = "Tomato",
+                original = "2 Tomatoes",
+                amount = 2.0,
+                unit = "pcs",
+                image = null,
+            ),
         ),
         summary = "A test summary",
-        instructions = "Test instructions"
+        instructions = "Test instructions",
     )
 
     private class FakeRecipeRepository(val recipe: Recipe) : RecipeRepository {

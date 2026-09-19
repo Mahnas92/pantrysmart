@@ -4,7 +4,6 @@ import com.example.pantrysmart.data.api.model.IngredientDto
 import com.example.pantrysmart.data.local.entity.IngredientEntity
 import com.example.pantrysmart.data.local.entity.ShoppingListItemEntity
 import com.example.pantrysmart.domain.model.Ingredient
-import com.example.pantrysmart.domain.model.Recipe
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
@@ -27,7 +26,14 @@ class MappersTest {
 
     @Test
     fun `IngredientDto toDomain maps correctly with additionalInfo`() {
-        val dto = IngredientDto(id = 1, name = "Bell pepper", original = "1 red bell pepper", amount = 1.0, unit = "piece", image = "pepper.jpg")
+        val dto = IngredientDto(
+            id = 1,
+            name = "Bell pepper",
+            original = "1 red bell pepper",
+            amount = 1.0,
+            unit = "piece",
+            image = "pepper.jpg",
+        )
         val domain = dto.toDomain()
         
         assertEquals(1, domain.id)
@@ -42,7 +48,13 @@ class MappersTest {
     @Test
     fun `IngredientEntity toDomain and toEntity preserve additionalInfo`() {
         val entity = IngredientEntity(
-            id = 1, name = "Sugar", original = "1 cup sugar", amount = 1.0, unit = "cup", image = null, additionalInfo = "refined"
+            id = 1,
+            name = "Sugar",
+            original = "1 cup sugar",
+            amount = 1.0,
+            unit = "cup",
+            image = null,
+            additionalInfo = "refined",
         )
         val domain = entity.toDomain()
         assertEquals("refined", domain.additionalInfo)

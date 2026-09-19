@@ -31,10 +31,14 @@ fun extractAdditionalInfo(original: String, amount: Double, unit: String, name: 
 }
 
 fun IngredientDto.toDomain(): Ingredient {
-    val fullImageUrl = if (image != null && !image.startsWith("http")) {
-        "https://spoonacular.com/cdn/ingredients_100x100/$image"
+    val fullImageUrl = if (image != null) {
+        if (!image.startsWith("http")) {
+            "https://spoonacular.com/cdn/ingredients_100x100/$image"
+        } else {
+            image.replace("http://", "https://")
+        }
     } else {
-        image
+        null
     }
     return Ingredient(
         id = id,
@@ -48,10 +52,14 @@ fun IngredientDto.toDomain(): Ingredient {
 }
 
 fun RecipeDto.toDomain(): Recipe {
-    val fullImageUrl = if (image != null && !image.startsWith("http")) {
-        "https://img.spoonacular.com/recipes/$image"
+    val fullImageUrl = if (image != null) {
+        if (!image.startsWith("http")) {
+            "https://img.spoonacular.com/recipes/$image"
+        } else {
+            image.replace("http://", "https://")
+        }
     } else {
-        image
+        null
     }
     return Recipe(
         id = id.toLong(),

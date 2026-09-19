@@ -2,7 +2,6 @@ package com.example.pantrysmart.ui.screens.search
 
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
-import com.example.pantrysmart.domain.model.Ingredient
 import com.example.pantrysmart.domain.model.Recipe
 import com.example.pantrysmart.domain.repository.RecipeRepository
 import com.example.pantrysmart.ui.theme.PantrySmartTheme
@@ -19,15 +18,15 @@ class SearchScreenTest {
     private val fakeRecipes = listOf(
         Recipe(
             id = 1L,
-            title = "Test Recept",
+            title = "Test Recipe",
             image = null,
             readyInMinutes = 30,
             servings = 4,
             sourceUrl = null,
             ingredients = emptyList(),
             summary = "En test sammanfattning",
-            instructions = "Test instruktioner"
-        )
+            instructions = "Test instruktioner",
+        ),
     )
 
     private val fakeRepository = object : RecipeRepository {
@@ -72,7 +71,7 @@ class SearchScreenTest {
         // Wait for debounce and check if result is displayed
         composeTestRule.waitUntilAtLeastOneExists(
             matcher = hasText("Test Recipe"),
-            timeoutMillis = 5000
+            timeoutMillis = 5000L,
         )
 
         composeTestRule.onNodeWithText("Test Recipe").assertIsDisplayed()
