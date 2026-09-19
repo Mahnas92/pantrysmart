@@ -9,13 +9,10 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.example.pantrysmart.R
-import com.example.pantrysmart.ui.components.PantryScaffold
-import com.example.pantrysmart.ui.components.PantryTopBar
-import com.example.pantrysmart.ui.screens.search.RecipeCard
+import com.example.pantrysmart.ui.components.*
 import com.example.pantrysmart.ui.theme.spacing
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -42,17 +39,10 @@ fun FavoritesScreen(
         }
     ) { paddingValues ->
         if (favorites.isEmpty()) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = stringResource(R.string.no_favorites_yet),
-                    style = MaterialTheme.typography.bodyLarge
-                )
-            }
+            EmptyState(
+                message = stringResource(R.string.no_favorites_yet),
+                modifier = Modifier.padding(paddingValues)
+            )
         } else {
             LazyColumn(
                 modifier = Modifier

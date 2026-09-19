@@ -1,12 +1,9 @@
 package com.example.pantrysmart.data.mapper
 
 import com.example.pantrysmart.data.api.model.IngredientDto
-import com.example.pantrysmart.data.api.model.RecipeDto
 import com.example.pantrysmart.data.local.entity.IngredientEntity
-import com.example.pantrysmart.data.local.entity.RecipeEntity
 import com.example.pantrysmart.data.local.entity.ShoppingListItemEntity
 import com.example.pantrysmart.domain.model.Ingredient
-import com.example.pantrysmart.domain.model.Recipe
 
 fun extractAdditionalInfo(original: String, amount: Double, unit: String, name: String): String? {
     var result = original
@@ -51,29 +48,6 @@ fun IngredientDto.toDomain(): Ingredient {
     )
 }
 
-fun RecipeDto.toDomain(): Recipe {
-    val fullImageUrl = if (image != null) {
-        if (!image.startsWith("http")) {
-            "https://img.spoonacular.com/recipes/$image"
-        } else {
-            image.replace("http://", "https://")
-        }
-    } else {
-        null
-    }
-    return Recipe(
-        id = id.toLong(),
-        title = title,
-        image = fullImageUrl,
-        readyInMinutes = readyInMinutes,
-        servings = servings,
-        sourceUrl = sourceUrl,
-        ingredients = extendedIngredients?.map { it.toDomain() } ?: emptyList(),
-        summary = summary,
-        instructions = instructions
-    )
-}
-
 fun IngredientEntity.toDomain(): Ingredient {
     return Ingredient(
         id = id,
@@ -86,21 +60,6 @@ fun IngredientEntity.toDomain(): Ingredient {
     )
 }
 
-fun RecipeEntity.toDomain(): Recipe {
-    return Recipe(
-        id = id,
-        title = title,
-        image = image,
-        readyInMinutes = readyInMinutes,
-        servings = servings,
-        sourceUrl = sourceUrl,
-        ingredients = ingredients.map { it.toDomain() },
-        summary = summary,
-        instructions = instructions,
-        isFavorite = isFavorite
-    )
-}
-
 fun Ingredient.toEntity(): IngredientEntity {
     return IngredientEntity(
         id = id,
@@ -110,21 +69,6 @@ fun Ingredient.toEntity(): IngredientEntity {
         unit = unit,
         image = image,
         additionalInfo = additionalInfo
-    )
-}
-
-fun Recipe.toEntity(): RecipeEntity {
-    return RecipeEntity(
-        id = id,
-        title = title,
-        image = image,
-        readyInMinutes = readyInMinutes,
-        servings = servings,
-        sourceUrl = sourceUrl,
-        summary = summary,
-        instructions = instructions,
-        ingredients = ingredients.map { it.toEntity() },
-        isFavorite = isFavorite
     )
 }
 

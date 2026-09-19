@@ -1,6 +1,5 @@
 package com.example.pantrysmart.ui.screens.search
 
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -8,27 +7,15 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.rounded.BrokenImage
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.dp
-import coil3.compose.AsyncImage
-import coil3.request.ImageRequest
-import coil3.request.crossfade
 import com.example.pantrysmart.R
-import com.example.pantrysmart.domain.model.Recipe
-import com.example.pantrysmart.ui.components.PantryScaffold
-import com.example.pantrysmart.ui.components.PantryTopBar
+import com.example.pantrysmart.ui.components.*
 import com.example.pantrysmart.ui.theme.spacing
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -100,11 +87,7 @@ fun SearchScreen(
             }
 
             when (val state = uiState) {
-                is SearchUiState.Loading -> {
-                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        CircularProgressIndicator()
-                    }
-                }
+                is SearchUiState.Loading -> LoadingScreen()
                 is SearchUiState.Success -> {
                     LazyColumn(
                         verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.medium),
@@ -119,76 +102,10 @@ fun SearchScreen(
                         }
                     }
                 }
-                is SearchUiState.Empty -> {
-                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Text(stringResource(R.string.no_recipes_found))
-                    }
-                }
-                is SearchUiState.Error -> {
-                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Text(
-                            text = stringResource(R.string.error_occurred, state.message),
-                            color = MaterialTheme.colorScheme.error
-                        )
-                    }
-                }
+                is SearchUiState.Empty -> EmptyState(message = stringResource(R.string.no_recipes_found))
+                is SearchUiState.Error -> ErrorScreen(message = state.message)
             }
         }
     }
 }
 
-@Composable
-fun RecipeCard(
-    recipe: Recipe,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Card(
-        modifier = modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        shape = MaterialTheme.shapes.large
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(120.dp)
-        ) {
-            Log.d("AsyncImage", "Loading card image for ${recipe.title}: ${recipe.image}")
-            AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(recipe.image)
-                    .crossfade(true)
-                    .build(),
-                contentDescription = recipe.title,
-                modifier = Modifier
-                    .width(120.dp)
-                    .fillMaxHeight(),
-                contentScale = ContentScale.Crop,
-                placeholder = painterResource(R.drawable.placeholder),
-                error = rememberVectorPainter(Icons.Rounded.BrokenImage)
-            )
-            Column(
-                modifier = Modifier
-                    .padding(MaterialTheme.spacing.medium)
-                    .fillMaxSize(),
-                verticalArrangement = Arrangement.Center
-            ) {
-                Text(
-                    text = recipe.title,
-                    style = MaterialTheme.typography.titleMedium,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
-                )
-                recipe.readyInMinutes?.let {
-                    Text(
-                        text = stringResource(R.string.minutes_format, it),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-            }
-        }
-    }
-}

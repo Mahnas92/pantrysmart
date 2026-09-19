@@ -9,6 +9,7 @@ import com.example.pantrysmart.data.local.entity.RecipeEntity
 import com.example.pantrysmart.data.mapper.toDomain
 import com.example.pantrysmart.data.mapper.toEntity
 import com.example.pantrysmart.data.mapper.toShoppingListItemEntity
+import com.example.pantrysmart.data.util.isFresh
 import com.example.pantrysmart.domain.model.Ingredient
 import com.example.pantrysmart.domain.model.Recipe
 import com.example.pantrysmart.domain.repository.RecipeRepository
@@ -34,11 +35,7 @@ class OfflineRecipeRepository(
         // Fetch from network and update database
         try {
             val localRecipes = recipeDao.searchRecipes(query).first()
-            val isFresh = localRecipes.isNotEmpty() && localRecipes.all {
-                System.currentTimeMillis() - it.lastUpdated < TTL_MILLIS
-            }
-
-            if (!isFresh) {
+            if (!localRecipes.isFresh()) {
                 val response = spoonacularService.searchRecipes(query, 20, apiKey)
                 val entities = response.results.map { it.toDomain().toEntity().copy(lastUpdated = System.currentTimeMillis()) }
                 upsertAll(entities)
@@ -79,9 +76,7 @@ class OfflineRecipeRepository(
 
         try {
             val localRecipe = recipeDao.getRecipeByIdOnce(id)
-            val isFresh = localRecipe != null && localRecipe.ingredients.isNotEmpty() && (System.currentTimeMillis() - localRecipe.lastUpdated < TTL_MILLIS)
-
-            if (!isFresh) {
+            if (localRecipe == null || localRecipe.ingredients.isEmpty() || !localRecipe.isFresh()) {
                 val dto = spoonacularService.getRecipeInformation(id.toInt(), apiKey)
                 val entity = dto.toDomain().toEntity().copy(lastUpdated = System.currentTimeMillis())
                 upsertAll(listOf(entity))
@@ -156,9 +151,5 @@ class OfflineRecipeRepository(
                 recipeDao.insert(entity)
             }
         }
-    }
-
-    companion object {
-        const val TTL_MILLIS = 60L * 24 * 60 * 60 * 1000
     }
 }

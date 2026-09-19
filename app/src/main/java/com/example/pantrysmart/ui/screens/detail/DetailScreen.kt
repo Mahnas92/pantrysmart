@@ -26,14 +26,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import coil3.compose.AsyncImage
-import coil3.request.ImageRequest
-import coil3.request.crossfade
 import com.example.pantrysmart.R
 import com.example.pantrysmart.domain.model.Ingredient
 import com.example.pantrysmart.domain.model.Recipe
-import com.example.pantrysmart.ui.components.PantryScaffold
-import com.example.pantrysmart.ui.components.PantryTopBar
+import com.example.pantrysmart.ui.components.*
 import com.example.pantrysmart.ui.theme.spacing
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -48,11 +44,7 @@ fun DetailScreen(
     val isAllIngredientsAdded by viewModel.isAllIngredientsAdded.collectAsState()
 
     when (val state = uiState) {
-        is DetailUiState.Loading -> {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator()
-            }
-        }
+        is DetailUiState.Loading -> LoadingScreen()
         is DetailUiState.Success -> {
             RecipeDetailContent(
                 recipe = state.recipe,
@@ -69,11 +61,7 @@ fun DetailScreen(
                 onNavigateToShoppingList = onNavigateToShoppingList,
             )
         }
-        is DetailUiState.Error -> {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text(state.message, color = MaterialTheme.colorScheme.error)
-            }
-        }
+        is DetailUiState.Error -> ErrorScreen(message = state.message)
     }
 }
 
@@ -184,28 +172,6 @@ fun RecipeDetailContent(
     }
 }
 
-@Composable
-fun RecipeImage(imageUrl: String?, title: String) {
-    Log.d("AsyncImage", "Loading image for $title: $imageUrl")
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(250.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
-    ) {
-        AsyncImage(
-            model = ImageRequest.Builder(LocalContext.current)
-                .data(imageUrl)
-                .crossfade(true)
-                .build(),
-            contentDescription = title,
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop,
-            placeholder = painterResource(R.drawable.placeholder),
-            error = rememberVectorPainter(Icons.Rounded.BrokenImage)
-        )
-    }
-}
 
 @Composable
 fun IngredientsList(

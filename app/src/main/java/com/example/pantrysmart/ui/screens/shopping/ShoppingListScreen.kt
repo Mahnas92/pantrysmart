@@ -11,12 +11,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import com.example.pantrysmart.R
-import com.example.pantrysmart.ui.components.PantryScaffold
-import com.example.pantrysmart.ui.components.PantryTopBar
+import com.example.pantrysmart.ui.components.*
 import com.example.pantrysmart.ui.theme.spacing
 import java.util.*
 
@@ -46,19 +44,10 @@ fun ShoppingListScreen(
         }
     ) { paddingValues ->
         if (shoppingList.isEmpty()) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = stringResource(R.string.empty_shopping_list_message),
-                    style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier.padding(MaterialTheme.spacing.large),
-                    textAlign = TextAlign.Center
-                )
-            }
+            EmptyState(
+                message = stringResource(R.string.empty_shopping_list_message),
+                modifier = Modifier.padding(paddingValues)
+            )
         } else {
             LazyColumn(
                 modifier = Modifier

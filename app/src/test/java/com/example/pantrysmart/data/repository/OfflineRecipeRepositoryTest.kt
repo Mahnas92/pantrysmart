@@ -10,6 +10,7 @@ import com.example.pantrysmart.data.local.dao.SearchHistoryDao
 import com.example.pantrysmart.data.local.entity.IngredientEntity
 import com.example.pantrysmart.data.local.entity.RecipeEntity
 import com.example.pantrysmart.data.local.entity.ShoppingListItemEntity
+import com.example.pantrysmart.data.util.CacheConfig
 import com.example.pantrysmart.domain.model.Ingredient
 import io.mockk.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -198,7 +199,7 @@ class OfflineRecipeRepositoryTest {
             summary = null,
             instructions = null,
             ingredients = emptyList(),
-            lastUpdated = System.currentTimeMillis() - (OfflineRecipeRepository.TTL_MILLIS + 1000)
+            lastUpdated = System.currentTimeMillis() - (CacheConfig.TTL_MILLIS + 1000)
         )
         val recipeDto = RecipeDto(id = 1, title = "Fresh Pasta From Net")
         val searchResponse = SearchResponseDto(

@@ -7,7 +7,7 @@ import com.example.pantrysmart.domain.model.Ingredient
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-class MappersTest {
+class IngredientMappersTest {
 
     @Test
     fun `extractAdditionalInfo works correctly`() {
