@@ -20,7 +20,7 @@ interface SearchHistoryDao {
 
     @Transaction
     suspend fun insertAndTrim(query: String, limit: Int = 5) {
-        insert(SearchHistoryEntity(query))
+        insert(SearchHistoryEntity(query.trim()))
         trimHistory(limit)
     }
 }
