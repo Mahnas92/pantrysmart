@@ -5,28 +5,6 @@ import com.example.pantrysmart.data.local.entity.IngredientEntity
 import com.example.pantrysmart.data.local.entity.ShoppingListItemEntity
 import com.example.pantrysmart.domain.model.Ingredient
 
-fun extractAdditionalInfo(original: String, amount: Double, unit: String, name: String): String? {
-    var result = original
-
-    val amtInt = amount.toInt()
-    val amtStrInt = amtInt.toString()
-    val amtStrDouble = amount.toString()
-
-    if (unit.isNotBlank()) {
-        result = result.replace(unit, "", ignoreCase = true)
-    }
-
-    result = result.replace(amtStrDouble, "", ignoreCase = true)
-    result = result.replace(amtStrInt, "", ignoreCase = true)
-
-    if (name.isNotBlank()) {
-        result = result.replace(name, "", ignoreCase = true)
-    }
-
-    val parts = result.split("\\s+".toRegex()).filter { it.isNotBlank() }
-    return if (parts.isEmpty()) null else parts.joinToString(", ")
-}
-
 fun IngredientDto.toDomain(): Ingredient {
     val fullImageUrl = if (image != null) {
         if (!image.startsWith("http")) {
@@ -44,7 +22,7 @@ fun IngredientDto.toDomain(): Ingredient {
         amount = amount,
         unit = unit,
         image = fullImageUrl,
-        additionalInfo = extractAdditionalInfo(original, amount, unit, name)
+        additionalInfo = extractAdditionalInfo()
     )
 }
 
@@ -91,4 +69,26 @@ fun Ingredient.toShoppingListItemEntity(): ShoppingListItemEntity {
         amount = amount,
         unit = unit
     )
+}
+
+private fun IngredientDto.extractAdditionalInfo(): String? {
+    var result = original
+
+    val amtInt = amount.toInt()
+    val amtStrInt = amtInt.toString()
+    val amtStrDouble = amount.toString()
+
+    if (unit.isNotBlank()) {
+        result = result.replace(unit, "", ignoreCase = true)
+    }
+
+    result = result.replace(amtStrDouble, "", ignoreCase = true)
+    result = result.replace(amtStrInt, "", ignoreCase = true)
+
+    if (name.isNotBlank()) {
+        result = result.replace(name, "", ignoreCase = true)
+    }
+
+    val parts = result.split("\\s+".toRegex()).filter { it.isNotBlank() }
+    return if (parts.isEmpty()) null else parts.joinToString(", ")
 }

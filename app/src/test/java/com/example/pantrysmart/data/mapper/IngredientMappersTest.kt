@@ -5,24 +5,10 @@ import com.example.pantrysmart.data.local.entity.IngredientEntity
 import com.example.pantrysmart.data.local.entity.ShoppingListItemEntity
 import com.example.pantrysmart.domain.model.Ingredient
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Test
 
 class IngredientMappersTest {
-
-    @Test
-    fun `extractAdditionalInfo works correctly`() {
-        // Case 1: Simple qualifier
-        assertEquals("red", extractAdditionalInfo("1 red bell pepper", 1.0, "piece", "bell pepper"))
-        
-        // Case 2: Multiple qualifiers with spaces
-        assertEquals("organic, extra, virgin", extractAdditionalInfo("2 cups organic extra virgin olive oil", 2.0, "cups", "olive oil"))
-        
-        // Case 3: Mixed case and extra spaces
-        assertEquals("Fresh, Chopped", extractAdditionalInfo("1 cup Fresh Chopped Cilantro", 1.0, "cup", "cilantro"))
-        
-        // Case 4: No qualifiers
-        assertEquals(null, extractAdditionalInfo("1 cup Sugar", 1.0, "cup", "Sugar"))
-    }
 
     @Test
     fun `IngredientDto toDomain maps correctly with additionalInfo`() {
@@ -43,6 +29,21 @@ class IngredientMappersTest {
         assertEquals("piece", domain.unit)
         assertEquals("https://spoonacular.com/cdn/ingredients_100x100/pepper.jpg", domain.image)
         assertEquals("red", domain.additionalInfo)
+    }
+
+    @Test
+    fun `extractAdditionalInfo logic within toDomain handles various cases`() {
+        // Case 1: Multiple qualifiers with spaces
+        val dto1 = IngredientDto(id = 2, name = "olive oil", original = "2 cups organic extra virgin olive oil", amount = 2.0, unit = "cups", image = null)
+        assertEquals("organic, extra, virgin", dto1.toDomain().additionalInfo)
+
+        // Case 2: Mixed case and extra spaces
+        val dto2 = IngredientDto(id = 3, name = "cilantro", original = "1 cup Fresh Chopped Cilantro", amount = 1.0, unit = "cup", image = null)
+        assertEquals("Fresh, Chopped", dto2.toDomain().additionalInfo)
+
+        // Case 3: No qualifiers
+        val dto3 = IngredientDto(id = 4, name = "Sugar", original = "1 cup Sugar", amount = 1.0, unit = "cup", image = null)
+        assertNull(dto3.toDomain().additionalInfo)
     }
 
     @Test
