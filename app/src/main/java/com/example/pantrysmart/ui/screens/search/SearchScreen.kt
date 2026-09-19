@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.rounded.BrokenImage
 import androidx.compose.material3.*
@@ -77,9 +78,19 @@ fun SearchScreen(
                     horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.small)
                 ) {
                     recentSearches.take(3).forEach { term ->
-                        AssistChip(
+                        InputChip(
+                            selected = false,
                             onClick = { viewModel.onQueryChange(term) },
                             label = { Text(term) },
+                            trailingIcon = {
+                                Icon(
+                                    imageVector = Icons.Default.Clear,
+                                    contentDescription = stringResource(R.string.delete_search_history),
+                                    modifier = Modifier
+                                        .size(InputChipDefaults.IconSize)
+                                        .clickable { viewModel.deleteHistoryItem(term) }
+                                )
+                            },
                             shape = MaterialTheme.shapes.medium
                         )
                     }

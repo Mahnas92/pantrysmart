@@ -43,10 +43,6 @@ class OfflineRecipeRepository(
                 val entities = response.results.map { it.toDomain().toEntity().copy(lastUpdated = System.currentTimeMillis()) }
                 upsertAll(entities)
             }
-            // Save query to history
-            if (query.isNotBlank()) {
-                addSearchToHistory(query)
-            }
         } catch (e: Exception) {
             Log.e("RecipeRepository", "Error fetching recipes for query: $query", e)
             // Error handling: fallback is already handled by the DB observer
@@ -68,6 +64,10 @@ class OfflineRecipeRepository(
 
     override suspend fun addSearchToHistory(query: String) {
         searchHistoryDao.insertAndTrim(query)
+    }
+
+    override suspend fun deleteSearchFromHistory(query: String) {
+        searchHistoryDao.delete(query)
     }
 
     override fun getRecipeDetails(id: Long): Flow<Recipe?> = channelFlow {

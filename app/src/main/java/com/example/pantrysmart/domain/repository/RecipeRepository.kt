@@ -29,6 +29,11 @@ interface RecipeRepository {
     suspend fun addSearchToHistory(query: String)
 
     /**
+     * Deletes a search term from the history.
+     */
+    suspend fun deleteSearchFromHistory(query: String)
+
+    /**
      * Fetches details for a specific recipe by its ID.
      */
     fun getRecipeDetails(id: Long): Flow<Recipe?>

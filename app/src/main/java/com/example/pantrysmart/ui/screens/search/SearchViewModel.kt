@@ -29,19 +29,6 @@ class SearchViewModel(
     private val _searchQuery = MutableStateFlow("")
     val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
 
-    init {
-        viewModelScope.launch {
-            searchQuery
-                .debounce(1000.milliseconds)
-                .distinctUntilChanged()
-                .collect { query ->
-                    if (query.isNotBlank()) {
-                        recipeRepository.addSearchToHistory(query)
-                    }
-                }
-        }
-    }
-
     val recentSearches: StateFlow<List<String>> = recipeRepository.getRecentSearches()
         .stateIn(
             scope = viewModelScope,
@@ -52,6 +39,11 @@ class SearchViewModel(
     val uiState: StateFlow<SearchUiState> = searchQuery
         .debounce(500.milliseconds)
         .distinctUntilChanged()
+        .onEach { query ->
+            if (query.isNotBlank()) {
+                recipeRepository.addSearchToHistory(query)
+            }
+        }
         .flatMapLatest { query ->
             if (query.isBlank()) {
                 recipeRepository.getAllRecipes()
@@ -84,6 +76,12 @@ class SearchViewModel(
 
     fun onQueryChange(newQuery: String) {
         _searchQuery.value = newQuery
+    }
+
+    fun deleteHistoryItem(query: String) {
+        viewModelScope.launch {
+            recipeRepository.deleteSearchFromHistory(query)
+        }
     }
 
     companion object {

@@ -87,7 +87,7 @@ class SearchViewModelTest {
     }
 
     @Test
-    fun `when query is not blank, it is saved to history`() = runTest {
+    fun `when query is not blank, it is saved to history after debounce`() = runTest {
         // Given
         val query = "Pasta"
         coEvery { repository.addSearchToHistory(query) } just Runs
@@ -95,10 +95,26 @@ class SearchViewModelTest {
         viewModel = SearchViewModel(repository)
 
         // When
+        val job = launch { viewModel.uiState.collect {} }
         viewModel.onQueryChange(query)
-        advanceTimeBy(1500.milliseconds) // Debounce for history is 1000ms
+        advanceTimeBy(600.milliseconds) // Debounce is 500ms
 
         // Then
         coVerify { repository.addSearchToHistory(query) }
+        job.cancel()
+    }
+
+    @Test
+    fun `deleteHistoryItem calls repository`() = runTest {
+        // Given
+        val query = "Pasta"
+        coEvery { repository.deleteSearchFromHistory(query) } just Runs
+        viewModel = SearchViewModel(repository)
+
+        // When
+        viewModel.deleteHistoryItem(query)
+
+        // Then
+        coVerify { repository.deleteSearchFromHistory(query) }
     }
 }

@@ -15,6 +15,9 @@ interface SearchHistoryDao {
     @Query("DELETE FROM search_history WHERE `query` NOT IN (SELECT `query` FROM (SELECT `query` FROM search_history ORDER BY timestamp DESC LIMIT :limit))")
     suspend fun trimHistory(limit: Int = 5)
 
+    @Query("DELETE FROM search_history WHERE `query` = :query")
+    suspend fun delete(query: String)
+
     @Transaction
     suspend fun insertAndTrim(query: String, limit: Int = 5) {
         insert(SearchHistoryEntity(query))
