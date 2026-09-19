@@ -16,11 +16,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import coil3.request.ImageRequest
+import coil3.request.crossfade
 import com.example.pantrysmart.R
 import com.example.pantrysmart.domain.model.Recipe
 import com.example.pantrysmart.ui.components.PantryScaffold
@@ -143,7 +146,10 @@ fun RecipeCard(
         ) {
             Log.d("AsyncImage", "Loading card image for ${recipe.title}: ${recipe.image}")
             AsyncImage(
-                model = recipe.image,
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(recipe.image)
+                    .crossfade(true)
+                    .build(),
                 contentDescription = recipe.title,
                 modifier = Modifier
                     .width(120.dp)

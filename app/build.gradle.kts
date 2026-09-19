@@ -84,6 +84,7 @@ dependencies {
 
     // Coil
     implementation(libs.coil.compose)
+    implementation(libs.coil.okhttp)
 
     // Testing
     testImplementation(libs.junit)

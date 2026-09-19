@@ -10,22 +10,22 @@ import com.example.pantrysmart.domain.model.Recipe
 
 fun extractAdditionalInfo(original: String, amount: Double, unit: String, name: String): String? {
     var result = original
-    
+
     val amtInt = amount.toInt()
     val amtStrInt = amtInt.toString()
     val amtStrDouble = amount.toString()
-    
+
     if (unit.isNotBlank()) {
         result = result.replace(unit, "", ignoreCase = true)
     }
-    
+
     result = result.replace(amtStrDouble, "", ignoreCase = true)
     result = result.replace(amtStrInt, "", ignoreCase = true)
-    
+
     if (name.isNotBlank()) {
         result = result.replace(name, "", ignoreCase = true)
     }
-    
+
     val parts = result.split("\\s+".toRegex()).filter { it.isNotBlank() }
     return if (parts.isEmpty()) null else parts.joinToString(", ")
 }
