@@ -45,10 +45,11 @@ class DetailScreenTest {
         
         private val _shoppingList = MutableStateFlow<List<Ingredient>>(emptyList())
 
-        override fun getRecipes(query: String): Flow<List<Recipe>> = flowOf(emptyList())
+        override fun searchRecipes(query: String, ingredients: List<String>?): Flow<List<Recipe>> = flowOf(emptyList())
         override fun getAllRecipes(): Flow<List<Recipe>> = flowOf(emptyList())
         override fun getRecentSearches(): Flow<List<String>> = flowOf(emptyList())
         override suspend fun addSearchToHistory(query: String) {}
+        override suspend fun deleteSearchFromHistory(query: String) {}
         override fun getRecipeDetails(id: Long): Flow<Recipe?> = flowOf(recipe)
         override suspend fun toggleFavorite(recipe: Recipe) {}
         override fun isFavorite(id: Long): Flow<Boolean> = flowOf(false)

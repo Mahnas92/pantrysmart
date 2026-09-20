@@ -2,6 +2,7 @@ package com.example.pantrysmart.ui.screens.search
 
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
+import com.example.pantrysmart.domain.model.Ingredient
 import com.example.pantrysmart.domain.model.Recipe
 import com.example.pantrysmart.domain.repository.RecipeRepository
 import com.example.pantrysmart.ui.theme.PantrySmartTheme
@@ -30,12 +31,13 @@ class SearchScreenTest {
     )
 
     private val fakeRepository = object : RecipeRepository {
-        override fun getRecipes(query: String): Flow<List<Recipe>> {
+        override fun searchRecipes(query: String, ingredients: List<String>?): Flow<List<Recipe>> {
             return if (query == "Test") flowOf(fakeRecipes) else flowOf(emptyList())
         }
         override fun getAllRecipes(): Flow<List<Recipe>> = flowOf(emptyList())
         override fun getRecentSearches(): Flow<List<String>> = flowOf(emptyList())
         override suspend fun addSearchToHistory(query: String) {}
+        override suspend fun deleteSearchFromHistory(query: String) {}
         override fun getRecipeDetails(id: Long): Flow<Recipe?> = flowOf(null)
         override suspend fun toggleFavorite(recipe: Recipe) {}
         override fun isFavorite(id: Long): Flow<Boolean> = flowOf(false)
@@ -48,7 +50,7 @@ class SearchScreenTest {
 
     @OptIn(ExperimentalTestApi::class)
     @Test
-    fun searchScreen_showsResults_whenQueryEntered() {
+    fun searchScreen_showsResults_whenQueryEnteredAndRefreshed() {
         val viewModel = SearchViewModel(fakeRepository)
 
         composeTestRule.setContent {
@@ -65,10 +67,16 @@ class SearchScreenTest {
         // Wait for UI to be ready
         composeTestRule.waitForIdle()
 
-        // Enter search query
-        composeTestRule.onNodeWithText("Search recipes…").performTextInput("Test")
+        // Enter search query into the new placeholder "What's in your pantry?"
+        composeTestRule.onNodeWithText("What's in your pantry?").performTextInput("Test")
 
-        // Wait for debounce and check if result is displayed
+        // Click the Add button inside the text field to commit to the Active Filter Panel
+        composeTestRule.onNodeWithContentDescription("Add to Active Filters").performClick()
+
+        // Click the Refresh button to commit the search
+        composeTestRule.onNodeWithContentDescription("Refresh").performClick()
+
+        // Wait and check if result is displayed
         composeTestRule.waitUntilAtLeastOneExists(
             matcher = hasText("Test Recipe"),
             timeoutMillis = 5000L,

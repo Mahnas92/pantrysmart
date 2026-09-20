@@ -91,7 +91,7 @@ class SearchViewModelTest {
         // Given
         val query = "Pasta"
         coEvery { repository.addSearchToHistory(query) } just Runs
-        every { repository.searchRecipes(query) } returns flowOf(emptyList())
+        every { repository.searchRecipes(query, any()) } returns flowOf(emptyList())
         viewModel = SearchViewModel(repository)
 
         // When
