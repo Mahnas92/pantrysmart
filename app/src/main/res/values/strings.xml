@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">PantrySmart</string>
-    <string name="search_recipes_placeholder">Search recipes&#8230;</string>
+    <string name="search_recipes_placeholder">Add ingredients&#8230;</string>
+    <string name="refresh_search">Refresh</string>
+    <string name="apply_filters">Apply Filters</string>
     <string name="no_recipes_found">No recipes found.</string>
     <string name="error_occurred">An error occurred: %1$s</string>
     <string name="minutes_format">%1$d minutes</string>
@@ -25,4 +27,5 @@
     <string name="amount_unit_format">%1$s %2$s</string>
     <string name="delete_search_history">Delete search history item</string>
     <string name="recent_ingredients">Recent Ingredients</string>
+    <string name="active_filters">Active Filters</string>
 </resources>
