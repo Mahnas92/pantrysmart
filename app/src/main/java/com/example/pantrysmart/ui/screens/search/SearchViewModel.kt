@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -29,6 +30,9 @@ class SearchViewModel(
     private val _searchQuery = MutableStateFlow("")
     val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
 
+    private val _selectedIngredients = MutableStateFlow<List<String>>(emptyList())
+    val selectedIngredients: StateFlow<List<String>> = _selectedIngredients.asStateFlow()
+
     val recentSearches: StateFlow<List<String>> = recipeRepository.getRecentSearches()
         .stateIn(
             scope = viewModelScope,
@@ -36,16 +40,19 @@ class SearchViewModel(
             initialValue = emptyList()
         )
 
-    val uiState: StateFlow<SearchUiState> = searchQuery
-        .debounce(500.milliseconds)
-        .distinctUntilChanged()
-        .onEach { query ->
+    val uiState: StateFlow<SearchUiState> = combine(
+        searchQuery.debounce(500.milliseconds).distinctUntilChanged(),
+        selectedIngredients
+    ) { query, ingredients ->
+        query to ingredients
+    }
+        .onEach { (query, _) ->
             if (query.isNotBlank()) {
                 recipeRepository.addSearchToHistory(query)
             }
         }
-        .flatMapLatest { query ->
-            if (query.isBlank()) {
+        .flatMapLatest { (query, ingredients) ->
+            if (query.isBlank() && ingredients.isEmpty()) {
                 recipeRepository.getAllRecipes()
                     .map { recipes ->
                         if (recipes.isEmpty()) {
@@ -56,7 +63,7 @@ class SearchViewModel(
                     }
                     .catch { emit(SearchUiState.Error(it.message ?: "Unknown error")) }
             } else {
-                recipeRepository.searchRecipes(query)
+                recipeRepository.searchRecipes(query, ingredients)
                     .map { recipes ->
                         if (recipes.isEmpty()) {
                             SearchUiState.Empty
@@ -75,7 +82,29 @@ class SearchViewModel(
         )
 
     fun onQueryChange(newQuery: String) {
-        _searchQuery.value = newQuery
+        if (newQuery.endsWith(",") || newQuery.endsWith("\n")) {
+            val ingredient = newQuery.dropLast(1).trim()
+            if (ingredient.isNotEmpty()) {
+                addIngredient(ingredient)
+            }
+            _searchQuery.value = ""
+        } else {
+            _searchQuery.value = newQuery
+        }
+    }
+
+    fun addIngredient(ingredient: String) {
+        val trimmed = ingredient.trim()
+        if (trimmed.isNotEmpty() && trimmed !in _selectedIngredients.value) {
+            _selectedIngredients.value = _selectedIngredients.value + trimmed
+            viewModelScope.launch {
+                recipeRepository.addSearchToHistory(trimmed)
+            }
+        }
+    }
+
+    fun removeIngredient(ingredient: String) {
+        _selectedIngredients.value = _selectedIngredients.value - ingredient
     }
 
     fun deleteHistoryItem(query: String) {

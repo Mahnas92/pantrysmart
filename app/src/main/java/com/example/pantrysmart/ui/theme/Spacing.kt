@@ -7,6 +7,7 @@ import androidx.compose.ui.unit.dp
 
 @Immutable
 data class Spacing(
+    val extraSmall: Dp = 2.dp,
     val small: Dp = 4.dp,
     val medium: Dp = 8.dp,
     val large: Dp = 16.dp,
