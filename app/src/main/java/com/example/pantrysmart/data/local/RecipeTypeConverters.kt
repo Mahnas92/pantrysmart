@@ -14,4 +14,14 @@ class RecipeTypeConverters {
     fun toIngredientList(value: String): List<IngredientEntity> {
         return Json.decodeFromString(value)
     }
+
+    @TypeConverter
+    fun fromLongList(value: List<Long>): String {
+        return Json.encodeToString(value)
+    }
+
+    @TypeConverter
+    fun toLongList(value: String): List<Long> {
+        return Json.decodeFromString(value)
+    }
 }

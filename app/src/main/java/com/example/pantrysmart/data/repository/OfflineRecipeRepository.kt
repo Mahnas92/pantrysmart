@@ -4,8 +4,10 @@ import android.util.Log
 import com.example.pantrysmart.data.api.SpoonacularService
 import com.example.pantrysmart.data.local.dao.RecipeDao
 import com.example.pantrysmart.data.local.dao.SearchHistoryDao
+import com.example.pantrysmart.data.local.dao.SearchResultDao
 import com.example.pantrysmart.data.local.dao.ShoppingListDao
 import com.example.pantrysmart.data.local.entity.RecipeEntity
+import com.example.pantrysmart.data.local.entity.SearchResultEntity
 import com.example.pantrysmart.data.mapper.toDomain
 import com.example.pantrysmart.data.mapper.toEntity
 import com.example.pantrysmart.data.mapper.toShoppingListItemEntity
@@ -22,21 +24,30 @@ class OfflineRecipeRepository(
     private val recipeDao: RecipeDao,
     private val shoppingListDao: ShoppingListDao,
     private val searchHistoryDao: SearchHistoryDao,
+    private val searchResultDao: SearchResultDao,
     private val apiKey: String,
 ) : RecipeRepository {
 
     override fun searchRecipes(query: String, ingredients: List<String>?): Flow<List<Recipe>> = channelFlow {
-        // Observe the database and send updates to the channel
-        val dbJob = launch {
-            recipeDao.searchRecipes(query)
+        val searchKey = generateSearchKey(query, ingredients)
+        val cachedResult = searchResultDao.getSearchResult(searchKey)
+
+        if (cachedResult.isFresh()) {
+            recipeDao.getRecipesByIds(cachedResult!!.recipeIds)
                 .map { entities -> entities.map { it.toDomain() } }
                 .collect { send(it) }
-        }
+        } else {
+            val dbJob = launch {
+                val flow = if (cachedResult != null) {
+                    recipeDao.getRecipesByIds(cachedResult.recipeIds)
+                } else {
+                    recipeDao.searchRecipes(query)
+                }
+                flow.map { entities -> entities.map { it.toDomain() } }
+                    .collect { send(it) }
+            }
 
-        // Fetch from network and update database
-        try {
-            val localRecipes = recipeDao.searchRecipes(query).first()
-            if (!localRecipes.isFresh()) {
+            try {
                 val ingredientsQuery = ingredients?.joinToString(",")
                 val response = spoonacularService.searchRecipes(
                     query = query,
@@ -44,16 +55,33 @@ class OfflineRecipeRepository(
                     apiKey = apiKey,
                     includeIngredients = ingredientsQuery
                 )
+                
                 val entities = response.results.map { it.toDomain().toEntity().copy(lastUpdated = System.currentTimeMillis()) }
                 upsertAll(entities)
-            }
-        } catch (e: Exception) {
-            Log.e("RecipeRepository", "Error fetching recipes for query: $query", e)
-            // Error handling: fallback is already handled by the DB observer
-        }
 
-        // Wait for the DB observation to complete (which happens when the flow is cancelled)
-        dbJob.join()
+                val recipeIds = entities.map { it.id }
+                searchResultDao.insertSearchResult(
+                    SearchResultEntity(
+                        searchKey = searchKey,
+                        recipeIds = recipeIds,
+                        lastUpdated = System.currentTimeMillis()
+                    )
+                )
+
+                dbJob.cancel()
+                recipeDao.getRecipesByIds(recipeIds)
+                    .map { entities -> entities.map { it.toDomain() } }
+                    .collect { send(it) }
+            } catch (e: Exception) {
+                Log.e("RecipeRepository", "Error fetching recipes for query: $query", e)
+                dbJob.join()
+            }
+        }
+    }
+
+    private fun generateSearchKey(query: String, ingredients: List<String>?): String {
+        val sortedIngredients = ingredients?.sorted()?.joinToString(",") ?: ""
+        return if (query.isNotBlank()) "query:$query;ingredients:$sortedIngredients" else sortedIngredients
     }
 
     override fun getAllRecipes(): Flow<List<Recipe>> {

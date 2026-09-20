@@ -25,6 +25,9 @@ interface RecipeDao {
     @Query("SELECT * FROM recipes WHERE id = :id")
     suspend fun getRecipeByIdOnce(id: Long): RecipeEntity?
 
+    @Query("SELECT * FROM recipes WHERE id IN (:ids)")
+    fun getRecipesByIds(ids: List<Long>): Flow<List<RecipeEntity>>
+
     @Query("SELECT EXISTS(SELECT 1 FROM recipes WHERE id = :id AND isFavorite = 1)")
     fun isFavorite(id: Long): Flow<Boolean>
 

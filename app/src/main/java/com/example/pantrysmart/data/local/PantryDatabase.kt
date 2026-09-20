@@ -7,18 +7,21 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.example.pantrysmart.data.local.dao.RecipeDao
 import com.example.pantrysmart.data.local.dao.SearchHistoryDao
+import com.example.pantrysmart.data.local.dao.SearchResultDao
 import com.example.pantrysmart.data.local.dao.ShoppingListDao
 import com.example.pantrysmart.data.local.entity.RecipeEntity
 import com.example.pantrysmart.data.local.entity.SearchHistoryEntity
+import com.example.pantrysmart.data.local.entity.SearchResultEntity
 import com.example.pantrysmart.data.local.entity.ShoppingListItemEntity
 
 @Database(
     entities = [
         RecipeEntity::class,
         ShoppingListItemEntity::class,
-        SearchHistoryEntity::class
+        SearchHistoryEntity::class,
+        SearchResultEntity::class
     ],
-    version = 4,
+    version = 5,
     exportSchema = true
 )
 @TypeConverters(RecipeTypeConverters::class)
@@ -26,6 +29,7 @@ abstract class PantryDatabase : RoomDatabase() {
     abstract fun recipeDao(): RecipeDao
     abstract fun shoppingListDao(): ShoppingListDao
     abstract fun searchHistoryDao(): SearchHistoryDao
+    abstract fun searchResultDao(): SearchResultDao
 
     companion object {
         @Volatile

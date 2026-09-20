@@ -29,6 +29,7 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
             recipeDao = database.recipeDao(),
             shoppingListDao = database.shoppingListDao(),
             searchHistoryDao = database.searchHistoryDao(),
+            searchResultDao = database.searchResultDao(),
             apiKey = BuildConfig.SPOONACULAR_API_KEY
         )
     }
