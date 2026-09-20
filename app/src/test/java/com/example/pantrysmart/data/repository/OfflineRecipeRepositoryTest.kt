@@ -10,7 +10,7 @@ import com.example.pantrysmart.data.local.dao.SearchHistoryDao
 import com.example.pantrysmart.data.local.entity.IngredientEntity
 import com.example.pantrysmart.data.local.entity.RecipeEntity
 import com.example.pantrysmart.data.local.entity.ShoppingListItemEntity
-import com.example.pantrysmart.data.util.CacheConfig
+import com.example.pantrysmart.util.Constants
 import com.example.pantrysmart.domain.model.Ingredient
 import io.mockk.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -57,16 +57,16 @@ class OfflineRecipeRepositoryTest {
             totalResults = 1,
         )
         
-        coEvery { service.searchRecipes(query, 20, apiKey) } returns searchResponse
+        coEvery { service.searchRecipes(query, Constants.MAX_SEARCH_RESULTS, apiKey, any()) } returns searchResponse
         coEvery { dao.getRecipeByIdOnce(1L) } returns null
         coEvery { dao.insert(any()) } just Runs
         every { dao.searchRecipes(query) } returns flowOf(emptyList())
 
         // When
-        repository.getRecipes(query).first()
+        repository.searchRecipes(query).first()
 
         // Then
-        coVerify { service.searchRecipes(query, 20, apiKey) }
+        coVerify { service.searchRecipes(query, Constants.MAX_SEARCH_RESULTS, apiKey, any()) }
         coVerify { dao.insert(match { it.id == 1L && it.title == "Pasta" }) }
     }
 
@@ -86,16 +86,16 @@ class OfflineRecipeRepositoryTest {
             ingredients = emptyList(),
         )
         
-        coEvery { service.searchRecipes(query, 20, apiKey) } throws Exception("Network error")
+        coEvery { service.searchRecipes(query, Constants.MAX_SEARCH_RESULTS, apiKey, any()) } throws Exception("Network error")
         every { dao.searchRecipes(query) } returns flowOf(listOf(cachedRecipe))
 
         // When
-        val result = repository.getRecipes(query).first()
+        val result = repository.searchRecipes(query).first()
 
         // Then
         assertEquals(1, result.size)
         assertEquals("Cached Pasta", result[0].title)
-        coVerify { service.searchRecipes(query, 20, apiKey) }
+        coVerify { service.searchRecipes(query, Constants.MAX_SEARCH_RESULTS, apiKey, any()) }
     }
 
     @Test
@@ -122,13 +122,13 @@ class OfflineRecipeRepositoryTest {
             isFavorite = true,
         )
         
-        coEvery { service.searchRecipes(query, 20, apiKey) } returns searchResponse
+        coEvery { service.searchRecipes(query, Constants.MAX_SEARCH_RESULTS, apiKey, any()) } returns searchResponse
         coEvery { dao.getRecipeByIdOnce(1L) } returns existingRecipe
         coEvery { dao.insert(any()) } just Runs
         every { dao.searchRecipes(query) } returns flowOf(listOf(existingRecipe))
 
         // When
-        repository.getRecipes(query).first()
+        repository.searchRecipes(query).first()
 
         // Then
         coVerify { dao.insert(match { it.id == 1L && it.title == "New Title" && it.isFavorite }) }
@@ -153,10 +153,10 @@ class OfflineRecipeRepositoryTest {
         every { dao.searchRecipes(query) } returns flowOf(listOf(freshRecipe))
 
         // When
-        repository.getRecipes(query).first()
+        repository.searchRecipes(query).first()
 
         // Then
-        coVerify(exactly = 0) { service.searchRecipes(any(), any(), any()) }
+        coVerify(exactly = 0) { service.searchRecipes(any(), any(), any(), any()) }
     }
 
     @Test
@@ -199,7 +199,7 @@ class OfflineRecipeRepositoryTest {
             summary = null,
             instructions = null,
             ingredients = emptyList(),
-            lastUpdated = System.currentTimeMillis() - (CacheConfig.TTL_MILLIS + 1000)
+            lastUpdated = System.currentTimeMillis() - (Constants.RECIPE_TTL_DAYS * 24 * 60 * 60 * 1000 + 1000)
         )
         val recipeDto = RecipeDto(id = 1, title = "Fresh Pasta From Net")
         val searchResponse = SearchResponseDto(
@@ -209,15 +209,15 @@ class OfflineRecipeRepositoryTest {
             totalResults = 1,
         )
         every { dao.searchRecipes(query) } returns flowOf(listOf(staleRecipe))
-        coEvery { service.searchRecipes(query, 20, apiKey) } returns searchResponse
+        coEvery { service.searchRecipes(query, Constants.MAX_SEARCH_RESULTS, apiKey, any()) } returns searchResponse
         coEvery { dao.getRecipeByIdOnce(1L) } returns staleRecipe
         coEvery { dao.insert(any()) } just Runs
 
         // When
-        repository.getRecipes(query).first()
+        repository.searchRecipes(query).first()
 
         // Then
-        coVerify(exactly = 1) { service.searchRecipes(query, 20, apiKey) }
+        coVerify(exactly = 1) { service.searchRecipes(query, Constants.MAX_SEARCH_RESULTS, apiKey, any()) }
     }
 
     @Test

@@ -66,15 +66,34 @@ Provide real-time feedback for user actions and ensure state consistency.
 
 ---
 
+## Phase 9: Chip-based Ingredient Search
+
+### Goal
+Transform the search experience from a single text query to a multi-ingredient chip-based search, optimizing API usage and improving discovery.
+
+#### [MODIFY] [SpoonacularService.kt](file:///C:/Users/Mahmoud/home/android-projects/SkafferiRecept/app/src/main/java/com/example/skafferiet/data/remote/SpoonacularService.kt)
+- Update `complexSearch` to accept a comma-separated string for `includeIngredients`.
+
+#### [MODIFY] [SearchHistoryDao.kt](file:///C:/Users/Mahmoud/home/android-projects/SkafferiRecept/app/src/main/java/com/example/skafferiet/data/local/dao/SearchHistoryDao.kt)
+- Update logic to handle individual ingredients instead of full query strings.
+- Increase storage capacity for recent ingredients.
+
+#### [MODIFY] [SearchViewModel.kt](file:///C:/Users/Mahmoud/home/android-projects/SkafferiRecept/app/src/main/java/com/example/skafferiet/ui/screens/search/SearchViewModel.kt)
+- Change `searchQuery` state from `String` to `List<String>`.
+- Add methods: `addIngredient(String)`, `removeIngredient(String)`.
+- Update search execution logic to join ingredients with commas.
+
+#### [MODIFY] [SearchScreen.kt](file:///C:/Users/Mahmoud/home/android-projects/SkafferiRecept/app/src/main/java/com/example/skafferiet/ui/screens/search/SearchScreen.kt)
+- Implement a custom "Chip Field" in place of the standard `TextField`.
+- Render a 3-row grid for "Recent Ingredients" chips.
+
 ## Verification Plan
 
 ### Automated Tests
-- Rename repository in tests.
-- Add tests for TTL logic in `OfflineRecipeRepositoryTest`.
-- Verify navigation logic in `NavigationFlowTest`.
+- Update `SearchViewModelTest` for list-based queries.
+- Test comma-separated string generation in `SpoonacularService` tests.
 
 ### Manual Verification
-- Verify app name change in launcher and top bar.
-- Test offline feed when opening the app without internet.
-- Test "Add to Shopping List" feedback in `DetailScreen`.
-- Verify back button behavior from `DetailScreen`.
+- Verify chip creation when typing comma or pressing enter.
+- Test chip removal by clicking the 'x' icon.
+- Confirm "Recent Ingredients" grid displays and correctly adds chips to the search list when clicked.

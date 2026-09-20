@@ -19,3 +19,11 @@
 - [ ] Update `DetailScreen` ingredient list with visual confirmation (checkmark/delete icon)
 - [ ] Implement visual success feedback for "Add All" ingredients action
 - [ ] Synchronize "added" state on `DetailScreen` with Shopping List database
+
+## Phase 9: Chip-based Ingredient Search
+- [ ] Modify `SpoonacularService` for multi-ingredient `complexSearch`
+- [ ] Update `SearchHistoryDao` and entities for individual ingredient tracking
+- [ ] Refactor `SearchViewModel` to use `List<String>` for queries
+- [ ] Implement chip addition/removal logic in ViewModel
+- [ ] Build custom "Chip Field" UI component
+- [ ] Implement 3-row grid for "Recent Ingredients"

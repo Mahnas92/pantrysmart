@@ -9,9 +9,9 @@ import kotlinx.coroutines.flow.Flow
  */
 interface RecipeRepository {
     /**
-     * Fetches recipes matching the given query.
+     * Fetches recipes matching the given query and optional ingredients.
      */
-    fun getRecipes(query: String): Flow<List<Recipe>>
+    fun searchRecipes(query: String, ingredients: List<String>? = null): Flow<List<Recipe>>
 
     /**
      * Fetches all recipes from the local cache.

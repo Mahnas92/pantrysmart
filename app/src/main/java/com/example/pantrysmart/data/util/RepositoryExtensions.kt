@@ -1,14 +1,12 @@
 package com.example.pantrysmart.data.util
 
 import com.example.pantrysmart.data.local.entity.RecipeEntity
-
-object CacheConfig {
-    const val TTL_MILLIS = 60L * 24 * 60 * 60 * 1000 // 60 days
-}
+import com.example.pantrysmart.util.Constants
 
 fun RecipeEntity?.isFresh(): Boolean {
     if (this == null) return false
-    return System.currentTimeMillis() - lastUpdated < CacheConfig.TTL_MILLIS
+    val ttlMillis = Constants.RECIPE_TTL_DAYS * 24 * 60 * 60 * 1000
+    return System.currentTimeMillis() - lastUpdated < ttlMillis
 }
 
 fun List<RecipeEntity>.isFresh(): Boolean {

@@ -13,6 +13,7 @@ import com.example.pantrysmart.data.util.isFresh
 import com.example.pantrysmart.domain.model.Ingredient
 import com.example.pantrysmart.domain.model.Recipe
 import com.example.pantrysmart.domain.repository.RecipeRepository
+import com.example.pantrysmart.util.Constants
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
@@ -24,7 +25,7 @@ class OfflineRecipeRepository(
     private val apiKey: String,
 ) : RecipeRepository {
 
-    override fun getRecipes(query: String): Flow<List<Recipe>> = channelFlow {
+    override fun searchRecipes(query: String, ingredients: List<String>?): Flow<List<Recipe>> = channelFlow {
         // Observe the database and send updates to the channel
         val dbJob = launch {
             recipeDao.searchRecipes(query)
@@ -36,7 +37,13 @@ class OfflineRecipeRepository(
         try {
             val localRecipes = recipeDao.searchRecipes(query).first()
             if (!localRecipes.isFresh()) {
-                val response = spoonacularService.searchRecipes(query, 20, apiKey)
+                val ingredientsQuery = ingredients?.joinToString(",")
+                val response = spoonacularService.searchRecipes(
+                    query = query,
+                    number = Constants.MAX_SEARCH_RESULTS,
+                    apiKey = apiKey,
+                    includeIngredients = ingredientsQuery
+                )
                 val entities = response.results.map { it.toDomain().toEntity().copy(lastUpdated = System.currentTimeMillis()) }
                 upsertAll(entities)
             }

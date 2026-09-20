@@ -56,7 +56,7 @@ class SearchViewModel(
                     }
                     .catch { emit(SearchUiState.Error(it.message ?: "Unknown error")) }
             } else {
-                recipeRepository.getRecipes(query)
+                recipeRepository.searchRecipes(query)
                     .map { recipes ->
                         if (recipes.isEmpty()) {
                             SearchUiState.Empty

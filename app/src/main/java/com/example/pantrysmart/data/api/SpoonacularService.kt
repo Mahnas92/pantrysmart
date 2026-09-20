@@ -12,7 +12,8 @@ interface SpoonacularService {
     suspend fun searchRecipes(
         @Query("query") query: String,
         @Query("number") number: Int,
-        @Query("apiKey") apiKey: String
+        @Query("apiKey") apiKey: String,
+        @Query("includeIngredients") includeIngredients: String? = null
     ): SearchResponseDto
 
     @GET("recipes/{id}/information")
